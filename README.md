@@ -1,4 +1,3 @@
-Create a new file named `README.md` in your `C:\others\llt` folder and paste the following content into it:
 
 # LoqNative (LLT)
 
