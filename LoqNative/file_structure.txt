@@ -1,0 +1,72 @@
+Folder PATH listing for volume Windows-SSD
+Volume serial number is 00000095 2CF3:9AAF
+C:.
+|   App.xaml
+|   App.xaml.cs
+|   file_structure.txt
+|   LoqNative.csproj
+|   MainWindow.xaml
+|   MainWindow.xaml.cs
+|   
++---bin
+|   \---Debug
+|       \---net8.0-windows
+|           |   LoqNative.deps.json
+|           |   LoqNative.dll
+|           |   LoqNative.exe
+|           |   LoqNative.pdb
+|           |   LoqNative.runtimeconfig.json
+|           |   System.Management.dll
+|           |   
+|           +---Dependencies
+|           |       telemetry.dll
+|           |       
+|           \---runtimes
+|               \---win
+|                   \---lib
+|                       \---net8.0
+|                               System.Management.dll
+|                               
++---Core
+|       BatteryEngine.cs
+|       TelemetryEngine.cs
+|       WmiEngine.cs
+|       
++---Dependencies
+|       telemetry.dll
+|       
+\---obj
+    |   LoqNative.csproj.nuget.dgspec.json
+    |   LoqNative.csproj.nuget.g.props
+    |   LoqNative.csproj.nuget.g.targets
+    |   project.assets.json
+    |   project.nuget.cache
+    |   
+    \---Debug
+        \---net8.0-windows
+            |   .NETCoreApp,Version=v8.0.AssemblyAttributes.cs
+            |   App.g.cs
+            |   apphost.exe
+            |   LoqNative.AssemblyInfo.cs
+            |   LoqNative.AssemblyInfoInputs.cache
+            |   LoqNative.assets.cache
+            |   LoqNative.csproj.AssemblyReference.cache
+            |   LoqNative.csproj.CoreCompileInputs.cache
+            |   LoqNative.csproj.FileListAbsolute.txt
+            |   LoqNative.csproj.Up2Date
+            |   LoqNative.dll
+            |   LoqNative.g.resources
+            |   LoqNative.GeneratedMSBuildEditorConfig.editorconfig
+            |   LoqNative.genruntimeconfig.cache
+            |   LoqNative.GlobalUsings.g.cs
+            |   LoqNative.pdb
+            |   LoqNative_MarkupCompile.cache
+            |   MainWindow.baml
+            |   MainWindow.g.cs
+            |   
+            +---ref
+            |       LoqNative.dll
+            |       
+            \---refint
+                    LoqNative.dll
+                    

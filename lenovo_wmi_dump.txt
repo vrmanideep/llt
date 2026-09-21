@@ -1,0 +1,706 @@
+=== LENOVO_GAMEZONE_THERMAL_MODE_EVENT ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - InstanceName
+    - mode
+    - SECURITY_DESCRIPTOR
+    - TIME_CREATED
+
+=== LENOVO_GAMEZONE_POWER_CHARGE_MODE_EVENT ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - InstanceName
+    - mode
+    - SECURITY_DESCRIPTOR
+    - TIME_CREATED
+
+=== LENOVO_GAMEZONE_SMART_FAN_MODE_EVENT ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - InstanceName
+    - mode
+    - SECURITY_DESCRIPTOR
+    - TIME_CREATED
+    - version
+
+=== LENOVO_UTILITY_EVENT ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - InstanceName
+    - PressTypeDataVal
+    - SECURITY_DESCRIPTOR
+    - TIME_CREATED
+
+=== LENOVO_GAMEZONE_KEYLOCK_STATUS_EVENT ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - InstanceName
+    - KeyLockState
+    - SECURITY_DESCRIPTOR
+    - TIME_CREATED
+
+=== LENOVO_LIGHTING_EVENT ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - InstanceName
+    - Key_ID
+    - SECURITY_DESCRIPTOR
+    - TIME_CREATED
+
+=== LENOVO_GAMEZONE_SMART_FAN_SETTING_EVENT ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - InstanceName
+    - mode
+    - SECURITY_DESCRIPTOR
+    - TIME_CREATED
+
+=== LENOVO_AI_SCENARIO_TYPE_EVENT ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - InstanceName
+    - SECURITY_DESCRIPTOR
+    - TIME_CREATED
+    - Type
+
+=== LENOVO_REPORT_STATUS_TO_DISPATCHER_EVENT ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - InstanceName
+    - SECURITY_DESCRIPTOR
+    - TIME_CREATED
+    - Type
+    - Value
+
+=== LENOVO_REPORT_2D3D_STATUS_EVENT ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - InstanceName
+    - SECURITY_DESCRIPTOR
+    - Status
+    - TIME_CREATED
+
+=== LENOVO_AI_CHIP_EVENT ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - InstanceName
+    - SECURITY_DESCRIPTOR
+    - Status
+    - TIME_CREATED
+
+=== LENOVO_GAMEZONE_LIGHT_PROFILE_CHANGE_EVENT ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - EventId
+    - InstanceName
+    - SECURITY_DESCRIPTOR
+    - TIME_CREATED
+
+=== LENOVO_DISPATCHER_EVENT ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - InstanceName
+    - PowerLevel
+    - SECURITY_DESCRIPTOR
+    - TIME_CREATED
+
+=== LENOVO_GAMEZONE_FAN_COOLING_EVENT ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - EventId
+    - InstanceName
+    - SECURITY_DESCRIPTOR
+    - TIME_CREATED
+
+=== LENOVO_BTKBD_EVENT ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - InstanceName
+    - SECURITY_DESCRIPTOR
+    - Status
+    - TIME_CREATED
+
+=== LENOVO_AC_PD_EVENT ===
+  Methods:
+    (None)
+  Properties:
+    - AC_PD_Status
+    - Active
+    - InstanceName
+    - SECURITY_DESCRIPTOR
+    - TIME_CREATED
+
+=== LENOVO_GAMEZONE_DATA ===
+  Methods:
+    - IsSupportGpuOC
+        [OUT] Data
+    - GetVersion
+        [OUT] Data
+    - IsSupportFanCooling
+        [OUT] Data
+    - SetFanCooling
+        [IN]  Data
+    - IsSupportCpuOC
+        [OUT] Data
+    - IsBIOSSupportOC
+        [OUT] Data
+    - SetBIOSOC
+        [IN]  Data
+    - GetCPUTemp
+        [OUT] Data
+    - GetGPUTemp
+        [OUT] Data
+    - GetFanCoolingStatus
+        [OUT] Data
+    - IsSupportDisableWinKey
+        [OUT] Data
+    - SetWinKeyStatus
+        [IN]  Data
+    - GetWinKeyStatus
+        [OUT] Data
+    - IsSupportDisableTP
+        [OUT] Data
+    - SetTPStatus
+        [IN]  Data
+    - GetTPStatus
+        [OUT] Data
+    - GetKeyboardfeaturelist
+        [OUT] Data
+    - GetMemoryOCInfo
+        [OUT] Data
+    - IsSupportWaterCooling
+        [OUT] Data
+    - SetWaterCoolingStatus
+        [IN]  Data
+    - GetWaterCoolingStatus
+        [OUT] Data
+    - IsSupportLightingFeature
+        [OUT] Data
+    - SetKeyboardLight
+        [IN]  Data
+    - GetKeyboardLight
+        [OUT] Data
+    - GetMacrokeyScancode
+        [IN]  idx
+        [OUT] scancode
+    - GetMacrokeyCount
+        [OUT] Data
+    - IsSupportGSync
+        [OUT] Data
+    - GetGSyncStatus
+        [OUT] Data
+    - SetGSyncStatus
+        [IN]  Data
+    - IsSupportSmartFan
+        [OUT] Data
+    - SetSmartFanMode
+        [IN]  Data
+    - GetSmartFanMode
+        [OUT] Data
+    - GetSmartFanSetting
+        [OUT] Data
+    - GetPowerChargeMode
+        [OUT] Data
+    - GetProductInfo
+        [OUT] Data
+    - IsSupportOD
+        [OUT] Data
+    - GetODStatus
+        [OUT] Data
+    - SetODStatus
+        [IN]  Data
+    - SetLightControlOwner
+        [IN]  Data
+    - SetDDSControlOwner
+        [IN]  Data
+    - IsRestoreOCValue
+        [IN]  idx
+        [OUT] Data
+    - GetThermalMode
+        [OUT] Data
+    - GetBIOSOCMode
+        [OUT] Data
+    - GetHardwareInfoSupportVersion
+        [OUT] Data
+    - GetCpuFrequency
+        [OUT] Data
+    - IsACFitForOC
+        [OUT] Data
+    - IsSupportIGPUMode
+        [OUT] Data
+    - GetIGPUModeStatus
+        [OUT] Data
+    - SetIGPUModeStatus
+        [IN]  mode
+        [OUT] Data
+    - NotifyDGPUStatus
+        [IN]  status
+        [OUT] Data
+    - IsChangedYLog
+        [OUT] Data
+    - GetDGPUHWId
+        [OUT] Data
+  Properties:
+    - Active
+    - InstanceName
+
+=== LENOVO_CAPABILITY_DATA_00 ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - Capability
+    - DefaultValue
+    - IDs
+    - InstanceName
+
+=== LENOVO_OTHER_METHOD ===
+  Methods:
+    - GetFeatureValue
+        [IN]  IDs
+        [OUT] value
+    - SetFeatureValue
+        [IN]  IDs
+        [IN]  value
+    - GetDataByCommand
+        [IN]  Command
+        [IN]  IDs
+        [OUT] Data
+        [OUT] DataSize
+    - GetDataByPackage
+        [IN]  Input
+        [OUT] Data
+        [OUT] DataSize
+  Properties:
+    - Active
+    - InstanceName
+
+=== LENOVO_MACHINE_LEARNING_LIST ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - Capability
+    - IDs
+    - InstanceName
+    - ListSize
+    - mode
+    - processname
+    - ProfileCount
+
+=== LENOVO_CAPABILITY_DATA_02 ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - Capability
+    - DataSize
+    - DefaultValue
+    - IDs
+    - InstanceName
+
+=== LENOVO_CAPABILITY_DATA_01 ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - Capability
+    - DefaultValue
+    - IDs
+    - InstanceName
+    - MaxValue
+    - MinValue
+    - Step
+
+=== LENOVO_DISCRETE_DATA ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - IDs
+    - InstanceName
+    - Value
+
+=== LENOVO_FAN_TABLE_DATA ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - CurrentFanMaxSpeed
+    - CurrentFanMinSpeed
+    - DesignMaxFanSpeedNumber
+    - EndOnlyUpwardAdjustNumber
+    - Fan_Id
+    - FanSpeedStep
+    - FanTable_Data
+    - FanTable_Len
+    - InstanceName
+    - MaxSensorTemperature
+    - MinSensorTemperature
+    - Mode
+    - Reserved
+    - Sensor_ID
+    - SensorTable_Data
+    - SensorTable_Len
+    - SensorTemperatureStep
+    - StartOnlyUpwardAdjustNumber
+
+=== LENOVO_GAMEZONE_GPU_OC_DATA ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - Capability
+    - ClockID
+    - defaultvalue
+    - InstanceName
+    - Interval
+    - NOCOrderid
+    - OCMaxOffset
+    - OCMinOffset
+    - OCOffsetFreq
+    - OCOffsetScale
+    - OCOrderid
+    - PStateID
+
+=== LENOVO_UTILITY_DATA ===
+  Methods:
+    - GetIfSupportOrVersion
+        [IN]  datatype
+        [OUT] Data
+    - SetFeature
+        [IN]  featuretype
+        [OUT] Data
+    - SetFeatureEx
+        [IN]  IDs
+        [IN]  Value
+        [OUT] Ret
+  Properties:
+    - Active
+    - InstanceName
+
+=== LENOVO_INTERNAL_PANEL_REFRESH_RATE_DATA ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - DefaultRefreshRate
+    - InstanceName
+    - InternalPanelHwID
+    - MaximumRefreshRate
+    - MinimumRefreshRate
+    - Mode
+
+=== LENOVO_LIGHTING_DATA ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - Brightness_Level
+    - Control_Interface
+    - Default_Brightness_Level
+    - Default_State
+    - InstanceName
+    - Lighting_Id
+    - Lighting_Type
+    - State_Type_Num
+
+=== LENOVO_FAN_METHOD ===
+  Methods:
+    - Fan_Get_Table
+        [IN]  FanID
+        [IN]  SensorID
+        [OUT] FanTable
+        [OUT] FanTableSize
+        [OUT] SensorTable
+        [OUT] SensorTableSize
+    - Fan_Set_Table
+        [IN]  FanTable
+  Properties:
+    - Active
+    - InstanceName
+
+=== LENOVO_REPORT_DBDC_DATA ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - Counts
+    - CurrentLimit
+    - InstanceName
+    - ROS_Power
+    - Threshold
+
+=== LENOVO_FAN_TEST_DATA ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - FanId
+    - FanMaxSpeed
+    - FanMinSpeed
+    - InstanceName
+    - NumOfFans
+
+=== LENOVO_CPU_METHOD ===
+  Methods:
+    - CPU_Set_OC_Data
+        [IN]  mode
+        [IN]  TuneID
+        [IN]  value
+  Properties:
+    - Active
+    - InstanceName
+
+=== LENOVO_FAN_MAX_SPEED_DATA ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - Fan_CurrentMaxSpeed
+    - Fan_DefaultMaxSpeed
+    - Fan_Flag
+    - Fan_Id
+    - InstanceName
+
+=== LENOVO_GPU_OVERCLOCKING_DATA ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - Capability
+    - ClockID
+    - defaultvalue
+    - GpuType
+    - InstanceName
+    - Interval
+    - mode
+    - NOCOrderid
+    - OCMaxOffset
+    - OCMinOffset
+    - OCOffsetFreq
+    - OCOffsetScale
+    - OCOrderid
+    - PStateID
+
+=== LENOVO_PANEL_METHOD ===
+  Methods:
+    - Panel_Get_Support_Status
+        [OUT] Support_Status
+    - Panel_Get_Status
+        [OUT] Status
+    - Panel_Set_Status
+        [IN]  Status
+    - Panel_Get_Low_Latency_Mode
+        [OUT] mode
+    - Panel_Set_Low_Latency_Mode
+        [IN]  mode
+    - Panel_Get_PIP_Info
+        [OUT] PosX
+        [OUT] PosY
+        [OUT] SizeX
+        [OUT] SizeY
+    - Panel_Set_PIP_Info
+        [IN]  PosX
+        [IN]  PosY
+        [IN]  SizeX
+        [IN]  SizeY
+    - Panel_Get_Game_Aid_FPS_Display_Pos
+        [OUT] PosX
+        [OUT] PosY
+    - Panel_Set_Game_Aid_FPS_Display_Pos
+        [IN]  PosX
+        [IN]  PosY
+    - Panel_Get_Game_Aid_FPS
+        [OUT] AvgFPS
+        [OUT] CurrentFPS
+        [OUT] MaxFPS
+        [OUT] MinFPS
+    - Panel_Get_Game_Aid_Sight_Mode
+        [OUT] mode
+    - Panel_Set_Game_Aid_Sight_Mode
+        [IN]  mode
+    - Panel_Get_Game_Aid_Timer_Info
+        [OUT] Clear
+        [OUT] End
+        [OUT] Start
+    - Panel_Set_Game_Aid_Timer_Info
+        [IN]  Clear
+        [IN]  End
+        [IN]  Start
+    - Panel_Get_Game_Aid_Countdown_Info
+        [OUT] time
+    - Panel_Set_Game_Aid_Countdown_Info
+        [IN]  time
+    - Panel_Get_Display_Mode
+        [OUT] mode
+    - Panel_Set_Display_Mode
+        [IN]  mode
+    - Panel_Get_Gamut_Switch
+        [OUT] mode
+    - Panel_Set_Gamut_Switch
+        [IN]  mode
+    - Panel_Get_MPRT
+        [OUT] PosX
+        [OUT] PosY
+        [OUT] SizeX
+        [OUT] SizeY
+    - Panel_Set_MPRT
+        [IN]  PosX
+        [IN]  PosY
+        [IN]  SizeX
+        [IN]  SizeY
+  Properties:
+    - Active
+    - InstanceName
+
+=== LENOVO_CPU_OVERCLOCKING_DATA ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - CpuType
+    - DefaultValue
+    - InstanceName
+    - Interval
+    - MaxValue
+    - MinValue
+    - mode
+    - NOCOrderid
+    - OCOrderid
+    - OCValue
+    - Reserved
+    - ScaleValue
+    - Tuneid
+
+=== Lenovo_SystemElement ===
+  Methods:
+    (None)
+  Properties:
+    (None)
+
+=== Lenovo_BatteryInformation ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - CurrentSetting
+    - InstanceName
+
+=== LENOVO_FEATURE_STATUS_DATA ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - IDs
+    - InstanceName
+    - Status
+
+=== LENOVO_MEMORY_OC_DATA ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - InstanceName
+    - MEM_OC_Ability
+    - MEM_OC_Customize_Frequency
+    - MEM_OC_Customize_NMode
+    - MEM_OC_Customize_tCL
+    - MEM_OC_Customize_tCLK
+    - MEM_OC_Customize_tCWL
+    - MEM_OC_Customize_tFAW
+    - MEM_OC_Customize_tRAS
+    - MEM_OC_Customize_tRCD_tRP
+    - MEM_OC_Customize_tREFI
+    - MEM_OC_Customize_tRFC
+    - MEM_OC_Customize_tRRD
+    - MEM_OC_Customize_tRTP
+    - MEM_OC_Customize_tWTR
+    - MEM_OC_Customize_VDD
+    - MEM_OC_Default_Frequency
+    - MEM_OC_Frequency_Scaler
+    - MEM_OC_Max_Frequency
+    - MEM_OC_Min_Frequency
+    - MEM_OC_XMP_Numbers
+
+=== LENOVO_GPU_METHOD ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - InstanceName
+
+=== LENOVO_GAMEZONE_CPU_OC_DATA ===
+  Methods:
+    (None)
+  Properties:
+    - Active
+    - DefaultValue
+    - InstanceName
+    - Interval
+    - MaxValue
+    - MinValue
+    - NOCOrderid
+    - OCOrderid
+    - OCValue
+    - ScaleValue
+    - Tuneid
+
+=== LENOVO_LIGHTING_METHOD ===
+  Methods:
+    - Get_Lighting_Current_Status
+        [IN]  Lighting_ID
+        [OUT] Current_Brightness_Level
+        [OUT] Current_State_Type
+    - Set_Lighting_Current_Status
+        [IN]  Current_Brightness_Level
+        [IN]  Current_State_Type
+        [IN]  Lighting_ID
+  Properties:
+    - Active
+    - InstanceName
+
+=== LENOVO_MEMORY_METHOD ===
+  Methods:
+    - MEM_Get_OC_Status
+        [IN]  mode
+        [OUT] Status
+    - MEM_Set_OC_Status
+        [IN]  mode
+        [IN]  Status
+    - MEM_Set_OC_Data
+        [IN]  MEM_OCData
+  Properties:
+    - Active
+    - InstanceName
+

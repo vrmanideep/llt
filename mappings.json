@@ -1,0 +1,19 @@
+{
+  "hardware_mappings": {
+    "fan_modes": {
+      "quiet": 1,
+      "balanced": 2,
+      "performance": 3,
+      "custom": 255
+    },
+    "gpu_modes": {
+      "hybrid": 0,
+      "dgpu": 1,
+      "igpu": 2
+    },
+    "battery_charge_modes": {
+      "normal_charge": 1,
+      "conservation_mode": 2
+    }
+  }
+}

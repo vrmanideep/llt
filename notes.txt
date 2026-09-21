@@ -1,0 +1,283 @@
+run:
+python "C:\others\llt\main.py"
+
+>> python "C:\others\llt\t.py"
+
+CLASS: LENOVO_UTILITY_EVENT
+
+CLASS: LENOVO_LIGHTING_EVENT
+
+CLASS: LENOVO_GAMEZONE_SMART_FAN_SETTING_EVENT
+
+CLASS: LENOVO_GAMEZONE_KEYLOCK_STATUS_EVENT
+
+CLASS: LENOVO_GAMEZONE_SMART_FAN_MODE_EVENT
+
+CLASS: LENOVO_AI_SCENARIO_TYPE_EVENT
+
+CLASS: LENOVO_REPORT_STATUS_TO_DISPATCHER_EVENT
+
+CLASS: LENOVO_REPORT_2D3D_STATUS_EVENT
+
+CLASS: LENOVO_GAMEZONE_THERMAL_MODE_EVENT
+
+CLASS: LENOVO_AI_CHIP_EVENT
+
+CLASS: LENOVO_GAMEZONE_LIGHT_PROFILE_CHANGE_EVENT
+
+CLASS: LENOVO_DISPATCHER_EVENT
+
+CLASS: LENOVO_GAMEZONE_FAN_COOLING_EVENT
+
+CLASS: LENOVO_GAMEZONE_POWER_CHARGE_MODE_EVENT
+
+CLASS: LENOVO_BTKBD_EVENT
+
+CLASS: LENOVO_AC_PD_EVENT
+
+CLASS: LENOVO_CAPABILITY_DATA_00
+
+CLASS: LENOVO_GAMEZONE_DATA
+  METHOD: IsSupportGpuOC
+    OUT: ['Data']
+  METHOD: GetVersion
+    OUT: ['Data']
+  METHOD: IsSupportFanCooling
+    OUT: ['Data']
+  METHOD: SetFanCooling
+    IN: ['Data']
+  METHOD: IsSupportCpuOC
+    OUT: ['Data']
+  METHOD: IsBIOSSupportOC
+    OUT: ['Data']
+  METHOD: SetBIOSOC
+    IN: ['Data']
+  METHOD: GetCPUTemp
+    OUT: ['Data']
+  METHOD: GetGPUTemp
+    OUT: ['Data']
+  METHOD: GetFanCoolingStatus
+    OUT: ['Data']
+  METHOD: IsSupportDisableWinKey
+    OUT: ['Data']
+  METHOD: SetWinKeyStatus
+    IN: ['Data']
+  METHOD: GetWinKeyStatus
+    OUT: ['Data']
+  METHOD: IsSupportDisableTP
+    OUT: ['Data']
+  METHOD: SetTPStatus
+    IN: ['Data']
+  METHOD: GetTPStatus
+    OUT: ['Data']
+  METHOD: GetKeyboardfeaturelist
+    OUT: ['Data']
+  METHOD: GetMemoryOCInfo
+    OUT: ['Data']
+  METHOD: IsSupportWaterCooling
+    OUT: ['Data']
+  METHOD: SetWaterCoolingStatus
+    IN: ['Data']
+  METHOD: GetWaterCoolingStatus
+    OUT: ['Data']
+  METHOD: IsSupportLightingFeature
+    OUT: ['Data']
+  METHOD: SetKeyboardLight
+    IN: ['Data']
+  METHOD: GetKeyboardLight
+    OUT: ['Data']
+  METHOD: GetMacrokeyScancode
+    IN: ['idx']
+    OUT: ['scancode']
+  METHOD: GetMacrokeyCount
+    OUT: ['Data']
+  METHOD: IsSupportGSync
+    OUT: ['Data']
+  METHOD: GetGSyncStatus
+    OUT: ['Data']
+  METHOD: SetGSyncStatus
+    IN: ['Data']
+  METHOD: IsSupportSmartFan
+    OUT: ['Data']
+  METHOD: SetSmartFanMode
+    IN: ['Data']
+  METHOD: GetSmartFanMode
+    OUT: ['Data']
+  METHOD: GetSmartFanSetting
+    OUT: ['Data']
+  METHOD: GetPowerChargeMode
+    OUT: ['Data']
+  METHOD: GetProductInfo
+    OUT: ['Data']
+  METHOD: IsSupportOD
+    OUT: ['Data']
+  METHOD: GetODStatus
+    OUT: ['Data']
+  METHOD: SetODStatus
+    IN: ['Data']
+  METHOD: SetLightControlOwner
+    IN: ['Data']
+  METHOD: SetDDSControlOwner
+    IN: ['Data']
+  METHOD: IsRestoreOCValue
+    IN: ['idx']
+    OUT: ['Data']
+  METHOD: GetThermalMode
+    OUT: ['Data']
+  METHOD: GetBIOSOCMode
+    OUT: ['Data']
+  METHOD: GetHardwareInfoSupportVersion
+    OUT: ['Data']
+  METHOD: GetCpuFrequency
+    OUT: ['Data']
+  METHOD: IsACFitForOC
+    OUT: ['Data']
+  METHOD: IsSupportIGPUMode
+    OUT: ['Data']
+  METHOD: GetIGPUModeStatus
+    OUT: ['Data']
+  METHOD: SetIGPUModeStatus
+    IN: ['mode']
+    OUT: ['Data']
+  METHOD: NotifyDGPUStatus
+    IN: ['status']
+    OUT: ['Data']
+  METHOD: IsChangedYLog
+    OUT: ['Data']
+  METHOD: GetDGPUHWId
+    OUT: ['Data']
+
+CLASS: LENOVO_OTHER_METHOD
+  METHOD: GetFeatureValue
+    IN: ['IDs']
+    OUT: ['value']
+  METHOD: SetFeatureValue
+    IN: ['IDs', 'value']
+  METHOD: GetDataByCommand
+    IN: ['Command', 'IDs']
+    OUT: ['Data', 'DataSize']
+  METHOD: GetDataByPackage
+    IN: ['Input']
+    OUT: ['Data', 'DataSize']
+
+CLASS: LENOVO_FAN_MAX_SPEED_DATA
+
+CLASS: LENOVO_LIGHTING_METHOD
+  METHOD: Get_Lighting_Current_Status
+    IN: ['Lighting_ID']
+    OUT: ['Current_Brightness_Level', 'Current_State_Type']
+  METHOD: Set_Lighting_Current_Status
+    IN: ['Current_Brightness_Level', 'Current_State_Type', 'Lighting_ID']
+
+CLASS: LENOVO_UTILITY_DATA
+  METHOD: GetIfSupportOrVersion
+    IN: ['datatype']
+    OUT: ['Data']
+  METHOD: SetFeature
+    IN: ['featuretype']
+    OUT: ['Data']
+  METHOD: SetFeatureEx
+    IN: ['IDs', 'Value']
+    OUT: ['Ret']
+
+CLASS: LENOVO_FAN_TABLE_DATA
+
+CLASS: LENOVO_FAN_METHOD
+  METHOD: Fan_Get_Table
+    IN: ['FanID', 'SensorID']
+    OUT: ['FanTable', 'FanTableSize', 'SensorTable', 'SensorTableSize']
+  METHOD: Fan_Set_Table
+    IN: ['FanTable']
+
+CLASS: LENOVO_REPORT_DBDC_DATA
+
+CLASS: LENOVO_FAN_TEST_DATA
+
+CLASS: LENOVO_CAPABILITY_DATA_02
+
+CLASS: LENOVO_CPU_METHOD
+  METHOD: CPU_Set_OC_Data
+    IN: ['mode', 'TuneID', 'value']
+
+CLASS: LENOVO_INTERNAL_PANEL_REFRESH_RATE_DATA
+
+CLASS: LENOVO_CAPABILITY_DATA_01
+
+CLASS: LENOVO_DISCRETE_DATA
+
+CLASS: LENOVO_GPU_OVERCLOCKING_DATA
+
+CLASS: LENOVO_PANEL_METHOD
+  METHOD: Panel_Get_Support_Status
+    OUT: ['Support_Status']
+  METHOD: Panel_Get_Status
+    OUT: ['Status']
+  METHOD: Panel_Set_Status
+    IN: ['Status']
+  METHOD: Panel_Get_Low_Latency_Mode
+    OUT: ['mode']
+  METHOD: Panel_Set_Low_Latency_Mode
+    IN: ['mode']
+  METHOD: Panel_Get_PIP_Info
+    OUT: ['PosX', 'PosY', 'SizeX', 'SizeY']
+  METHOD: Panel_Set_PIP_Info
+    IN: ['PosX', 'PosY', 'SizeX', 'SizeY']
+  METHOD: Panel_Get_Game_Aid_FPS_Display_Pos
+    OUT: ['PosX', 'PosY']
+  METHOD: Panel_Set_Game_Aid_FPS_Display_Pos
+    IN: ['PosX', 'PosY']
+  METHOD: Panel_Get_Game_Aid_FPS
+    OUT: ['AvgFPS', 'CurrentFPS', 'MaxFPS', 'MinFPS']
+  METHOD: Panel_Get_Game_Aid_Sight_Mode
+    OUT: ['mode']
+  METHOD: Panel_Set_Game_Aid_Sight_Mode
+    IN: ['mode']
+  METHOD: Panel_Get_Game_Aid_Timer_Info
+    OUT: ['Clear', 'End', 'Start']
+  METHOD: Panel_Set_Game_Aid_Timer_Info
+    IN: ['Clear', 'End', 'Start']
+  METHOD: Panel_Get_Game_Aid_Countdown_Info
+    OUT: ['time']
+  METHOD: Panel_Set_Game_Aid_Countdown_Info
+    IN: ['time']
+  METHOD: Panel_Get_Display_Mode
+    OUT: ['mode']
+  METHOD: Panel_Set_Display_Mode
+    IN: ['mode']
+  METHOD: Panel_Get_Gamut_Switch
+    OUT: ['mode']
+  METHOD: Panel_Set_Gamut_Switch
+    IN: ['mode']
+  METHOD: Panel_Get_MPRT
+    OUT: ['PosX', 'PosY', 'SizeX', 'SizeY']
+  METHOD: Panel_Set_MPRT
+    IN: ['PosX', 'PosY', 'SizeX', 'SizeY']
+
+CLASS: LENOVO_CPU_OVERCLOCKING_DATA
+
+CLASS: Lenovo_SystemElement
+
+CLASS: Lenovo_BatteryInformation
+
+CLASS: LENOVO_MACHINE_LEARNING_LIST
+
+CLASS: LENOVO_FEATURE_STATUS_DATA
+
+CLASS: LENOVO_MEMORY_OC_DATA
+
+CLASS: LENOVO_GPU_METHOD
+
+CLASS: LENOVO_LIGHTING_DATA
+
+CLASS: LENOVO_GAMEZONE_CPU_OC_DATA
+
+CLASS: LENOVO_GAMEZONE_GPU_OC_DATA
+
+CLASS: LENOVO_MEMORY_METHOD
+  METHOD: MEM_Get_OC_Status
+    IN: ['mode']
+    OUT: ['Status']
+  METHOD: MEM_Set_OC_Status
+    IN: ['mode', 'Status']
+  METHOD: MEM_Set_OC_Data
+    IN: ['MEM_OCData']
