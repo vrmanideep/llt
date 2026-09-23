@@ -64,6 +64,7 @@ namespace LoqNative
         public MainWindow()
         {
             InitializeComponent();
+            GpuTelemetryEngine.Initialize();
             
             var desktopWorkingArea = SystemParameters.WorkArea;
             this.Left = desktopWorkingArea.Right - this.Width - 12;
@@ -447,6 +448,7 @@ namespace LoqNative
                 uint gTemp = WmiEngine.GetFeatureValue((uint)LoqTelemetryId.GpuTemperature);
                 var battery = OsTelemetry.GetBatteryInfo();
                 var ram = OsTelemetry.GetRamDetails();
+                var nvGpuState = GpuTelemetryEngine.GetLiveTelemetry();
                 
                 return new 
                 {
@@ -493,6 +495,7 @@ namespace LoqNative
             var hwnd = new WindowInteropHelper(this).Handle;
             UnregisterHotKey(hwnd, HOTKEY_ID);
             _notifyIcon?.Dispose(); 
+            GpuTelemetryEngine.Shutdown();
             base.OnClosed(e);
         }
 

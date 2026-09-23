@@ -1,0 +1,492 @@
+
+--- NVAPI Initialized Successfully ---
+
+Found GPU Target: NVIDIA GeForce RTX 5050 Laptop GPU
+
+=== DUMPING ALL AVAILABLE PROPERTIES & SENSORS ===
+GPU.ActiveOutputs = [Collection: 0 items]
+
+>>> Found Sub-Module: GPU.ArchitectInformation (GPUArchitectInformation)
+GPU.ArchitectInformation.NumberOfCores = 2560
+GPU.ArchitectInformation.NumberOfGPC = 2
+GPU.ArchitectInformation.NumberOfROPs = 32
+GPU.ArchitectInformation.NumberOfShaderPipelines = 2
+GPU.ArchitectInformation.NumberOfShaderSubPipelines = 10
+GPU.ArchitectInformation.NumberOfVPEs = 0
+
+>>> Found Sub-Module: GPU.ArchitectInformation.PhysicalGPU (PhysicalGPU)
+GPU.ArchitectInformation.PhysicalGPU.ActiveOutputs = [Collection: 0 items]
+
+>>> Found Sub-Module: GPU.ArchitectInformation.PhysicalGPU.ArchitectInformation (GPUArchitectInformation)
+GPU.ArchitectInformation.PhysicalGPU.BaseClockFrequencies = [BaseClock] 3D Graphics = 10,20,000 kHz - Memory = 1,20,01,000 kHz - Video Decoding = N/A - Processor = N/A
+
+>>> Found Sub-Module: GPU.ArchitectInformation.PhysicalGPU.Bios (VideoBIOS)
+GPU.ArchitectInformation.PhysicalGPU.Board = Unknown
+GPU.ArchitectInformation.PhysicalGPU.BoostClockFrequencies = [BoostClock] 3D Graphics = 15,00,000 kHz - Memory = 1,20,01,000 kHz - Video Decoding = N/A - Processor = N/A
+
+>>> Found Sub-Module: GPU.ArchitectInformation.PhysicalGPU.BusInformation (GPUBusInformation)
+
+>>> Found Sub-Module: GPU.ArchitectInformation.PhysicalGPU.CoolerInformation (GPUCoolerInformation)
+
+>>> Found Sub-Module: GPU.ArchitectInformation.PhysicalGPU.CorrespondingLogicalGPU (LogicalGPU)
+GPU.ArchitectInformation.PhysicalGPU.CurrentClockFrequencies = [CurrentClock] 3D Graphics = 0 kHz - Memory = 90,01,000 kHz - Video Decoding = N/A - Processor = N/A
+GPU.ArchitectInformation.PhysicalGPU.DriverModel = 12800
+
+>>> Found Sub-Module: GPU.ArchitectInformation.PhysicalGPU.ECCMemoryInformation (ECCMemoryInformation)
+GPU.ArchitectInformation.PhysicalGPU.Foundry = [LOCKED/UNAVAILABLE]
+GPU.ArchitectInformation.PhysicalGPU.FullName = NVIDIA GeForce RTX 5050 Laptop GPU
+GPU.ArchitectInformation.PhysicalGPU.GPUId = 256
+GPU.ArchitectInformation.PhysicalGPU.GPUType = Discrete
+GPU.ArchitectInformation.PhysicalGPU.Handle = PhysicalGPUHandle #256
+GPU.ArchitectInformation.PhysicalGPU.IsQuadro = False
+
+>>> Found Sub-Module: GPU.ArchitectInformation.PhysicalGPU.MemoryInformation (GPUMemoryInformation)
+
+>>> Found Sub-Module: GPU.ArchitectInformation.PhysicalGPU.PerformanceControl (GPUPerformanceControl)
+
+>>> Found Sub-Module: GPU.ArchitectInformation.PhysicalGPU.PerformanceStatesInfo (GPUPerformanceStatesInformation)
+
+>>> Found Sub-Module: GPU.ArchitectInformation.PhysicalGPU.PowerTopologyInformation (GPUPowerTopologyInformation)
+GPU.ArchitectInformation.PhysicalGPU.SystemType = Laptop
+
+>>> Found Sub-Module: GPU.ArchitectInformation.PhysicalGPU.ThermalInformation (GPUThermalInformation)
+
+>>> Found Sub-Module: GPU.ArchitectInformation.PhysicalGPU.UsageInformation (GPUUsageInformation)
+GPU.ArchitectInformation.Revision = 161
+GPU.ArchitectInformation.ShortName = GB207-B
+GPU.ArchitectInformation.TotalNumberOfSMs = [LOCKED/UNAVAILABLE]
+GPU.ArchitectInformation.TotalNumberOfSPs = [LOCKED/UNAVAILABLE]
+GPU.ArchitectInformation.TotalNumberOfTPCs = 0
+GPU.BaseClockFrequencies = [BaseClock] 3D Graphics = 10,20,000 kHz - Memory = 1,20,01,000 kHz - Video Decoding = N/A - Processor = N/A
+
+>>> Found Sub-Module: GPU.Bios (VideoBIOS)
+GPU.Bios.OEMRevision = 169
+GPU.Bios.Revision = 2550604288
+GPU.Bios.VersionString = 98.07.22.00.A9
+GPU.Board = Unknown
+GPU.BoostClockFrequencies = [BoostClock] 3D Graphics = 15,00,000 kHz - Memory = 1,20,01,000 kHz - Video Decoding = N/A - Processor = N/A
+
+>>> Found Sub-Module: GPU.BusInformation (GPUBusInformation)
+GPU.BusInformation.AGPInformation = NULL
+GPU.BusInformation.BusId = 1
+GPU.BusInformation.BusSlot = 0
+GPU.BusInformation.BusType = PCIExpress
+GPU.BusInformation.CurrentPCIeLanes = 8
+GPU.BusInformation.IRQ = 0
+
+>>> Found Sub-Module: GPU.BusInformation.PCIIdentifiers (PCIIdentifiers)
+GPU.BusInformation.PCIIdentifiers.DeviceId = 769134814
+GPU.BusInformation.PCIIdentifiers.ExternalDeviceId = 11736
+GPU.BusInformation.PCIIdentifiers.RevisionId = 161
+GPU.BusInformation.PCIIdentifiers.SubSystemId = 1037834154
+GPU.BusInformation.PCIIdentifiers.VendorId = 4318
+
+>>> Found Sub-Module: GPU.BusInformation.PhysicalGPU (PhysicalGPU)
+GPU.BusInformation.PhysicalGPU.ActiveOutputs = [Collection: 0 items]
+
+>>> Found Sub-Module: GPU.BusInformation.PhysicalGPU.ArchitectInformation (GPUArchitectInformation)
+GPU.BusInformation.PhysicalGPU.BaseClockFrequencies = [BaseClock] 3D Graphics = 10,20,000 kHz - Memory = 1,20,01,000 kHz - Video Decoding = N/A - Processor = N/A
+
+>>> Found Sub-Module: GPU.BusInformation.PhysicalGPU.Bios (VideoBIOS)
+GPU.BusInformation.PhysicalGPU.Board = Unknown
+GPU.BusInformation.PhysicalGPU.BoostClockFrequencies = [BoostClock] 3D Graphics = 15,00,000 kHz - Memory = 1,20,01,000 kHz - Video Decoding = N/A - Processor = N/A
+
+>>> Found Sub-Module: GPU.BusInformation.PhysicalGPU.BusInformation (GPUBusInformation)
+
+>>> Found Sub-Module: GPU.BusInformation.PhysicalGPU.CoolerInformation (GPUCoolerInformation)
+
+>>> Found Sub-Module: GPU.BusInformation.PhysicalGPU.CorrespondingLogicalGPU (LogicalGPU)
+GPU.BusInformation.PhysicalGPU.CurrentClockFrequencies = [CurrentClock] 3D Graphics = 5,10,000 kHz - Memory = 90,01,000 kHz - Video Decoding = N/A - Processor = N/A
+GPU.BusInformation.PhysicalGPU.DriverModel = 12800
+
+>>> Found Sub-Module: GPU.BusInformation.PhysicalGPU.ECCMemoryInformation (ECCMemoryInformation)
+GPU.BusInformation.PhysicalGPU.Foundry = [LOCKED/UNAVAILABLE]
+GPU.BusInformation.PhysicalGPU.FullName = NVIDIA GeForce RTX 5050 Laptop GPU
+GPU.BusInformation.PhysicalGPU.GPUId = 256
+GPU.BusInformation.PhysicalGPU.GPUType = Discrete
+GPU.BusInformation.PhysicalGPU.Handle = PhysicalGPUHandle #256
+GPU.BusInformation.PhysicalGPU.IsQuadro = False
+
+>>> Found Sub-Module: GPU.BusInformation.PhysicalGPU.MemoryInformation (GPUMemoryInformation)
+
+>>> Found Sub-Module: GPU.BusInformation.PhysicalGPU.PerformanceControl (GPUPerformanceControl)
+
+>>> Found Sub-Module: GPU.BusInformation.PhysicalGPU.PerformanceStatesInfo (GPUPerformanceStatesInformation)
+
+>>> Found Sub-Module: GPU.BusInformation.PhysicalGPU.PowerTopologyInformation (GPUPowerTopologyInformation)
+GPU.BusInformation.PhysicalGPU.SystemType = Laptop
+
+>>> Found Sub-Module: GPU.BusInformation.PhysicalGPU.ThermalInformation (GPUThermalInformation)
+
+>>> Found Sub-Module: GPU.BusInformation.PhysicalGPU.UsageInformation (GPUUsageInformation)
+
+>>> Found Sub-Module: GPU.CoolerInformation (GPUCoolerInformation)
+GPU.CoolerInformation.Coolers = [LOCKED/UNAVAILABLE]
+GPU.CoolerInformation.CurrentFanSpeedInRPM = [LOCKED/UNAVAILABLE]
+GPU.CoolerInformation.CurrentFanSpeedLevel = [LOCKED/UNAVAILABLE]
+
+>>> Found Sub-Module: GPU.CoolerInformation.PhysicalGPU (PhysicalGPU)
+GPU.CoolerInformation.PhysicalGPU.ActiveOutputs = [Collection: 0 items]
+
+>>> Found Sub-Module: GPU.CoolerInformation.PhysicalGPU.ArchitectInformation (GPUArchitectInformation)
+GPU.CoolerInformation.PhysicalGPU.BaseClockFrequencies = [BaseClock] 3D Graphics = 10,20,000 kHz - Memory = 1,20,01,000 kHz - Video Decoding = N/A - Processor = N/A
+
+>>> Found Sub-Module: GPU.CoolerInformation.PhysicalGPU.Bios (VideoBIOS)
+GPU.CoolerInformation.PhysicalGPU.Board = Unknown
+GPU.CoolerInformation.PhysicalGPU.BoostClockFrequencies = [BoostClock] 3D Graphics = 15,00,000 kHz - Memory = 1,20,01,000 kHz - Video Decoding = N/A - Processor = N/A
+
+>>> Found Sub-Module: GPU.CoolerInformation.PhysicalGPU.BusInformation (GPUBusInformation)
+
+>>> Found Sub-Module: GPU.CoolerInformation.PhysicalGPU.CoolerInformation (GPUCoolerInformation)
+
+>>> Found Sub-Module: GPU.CoolerInformation.PhysicalGPU.CorrespondingLogicalGPU (LogicalGPU)
+GPU.CoolerInformation.PhysicalGPU.CurrentClockFrequencies = [CurrentClock] 3D Graphics = 5,10,000 kHz - Memory = 90,01,000 kHz - Video Decoding = N/A - Processor = N/A
+GPU.CoolerInformation.PhysicalGPU.DriverModel = 12800
+
+>>> Found Sub-Module: GPU.CoolerInformation.PhysicalGPU.ECCMemoryInformation (ECCMemoryInformation)
+GPU.CoolerInformation.PhysicalGPU.Foundry = [LOCKED/UNAVAILABLE]
+GPU.CoolerInformation.PhysicalGPU.FullName = NVIDIA GeForce RTX 5050 Laptop GPU
+GPU.CoolerInformation.PhysicalGPU.GPUId = 256
+GPU.CoolerInformation.PhysicalGPU.GPUType = Discrete
+GPU.CoolerInformation.PhysicalGPU.Handle = PhysicalGPUHandle #256
+GPU.CoolerInformation.PhysicalGPU.IsQuadro = False
+
+>>> Found Sub-Module: GPU.CoolerInformation.PhysicalGPU.MemoryInformation (GPUMemoryInformation)
+
+>>> Found Sub-Module: GPU.CoolerInformation.PhysicalGPU.PerformanceControl (GPUPerformanceControl)
+
+>>> Found Sub-Module: GPU.CoolerInformation.PhysicalGPU.PerformanceStatesInfo (GPUPerformanceStatesInformation)
+
+>>> Found Sub-Module: GPU.CoolerInformation.PhysicalGPU.PowerTopologyInformation (GPUPowerTopologyInformation)
+GPU.CoolerInformation.PhysicalGPU.SystemType = Laptop
+
+>>> Found Sub-Module: GPU.CoolerInformation.PhysicalGPU.ThermalInformation (GPUThermalInformation)
+
+>>> Found Sub-Module: GPU.CoolerInformation.PhysicalGPU.UsageInformation (GPUUsageInformation)
+
+>>> Found Sub-Module: GPU.CorrespondingLogicalGPU (LogicalGPU)
+GPU.CorrespondingLogicalGPU.CorrespondingPhysicalGPUs = [Collection: 1 items]
+GPU.CorrespondingLogicalGPU.Handle = LogicalGPUHandle #2852126721
+GPU.CurrentClockFrequencies = [CurrentClock] 3D Graphics = 5,10,000 kHz - Memory = 90,01,000 kHz - Video Decoding = N/A - Processor = N/A
+GPU.DriverModel = 12800
+
+>>> Found Sub-Module: GPU.ECCMemoryInformation (ECCMemoryInformation)
+GPU.ECCMemoryInformation.AggregatedDoubleBitErrors = 0
+GPU.ECCMemoryInformation.AggregatedSingleBitErrors = 0
+GPU.ECCMemoryInformation.Configuration = NotSupported
+GPU.ECCMemoryInformation.CurrentDoubleBitErrors = 0
+GPU.ECCMemoryInformation.CurrentSingleBitErrors = 0
+GPU.ECCMemoryInformation.IsEnabled = False
+GPU.ECCMemoryInformation.IsEnabledByDefault = False
+GPU.ECCMemoryInformation.IsSupported = False
+
+>>> Found Sub-Module: GPU.ECCMemoryInformation.PhysicalGPU (PhysicalGPU)
+GPU.ECCMemoryInformation.PhysicalGPU.ActiveOutputs = [Collection: 0 items]
+
+>>> Found Sub-Module: GPU.ECCMemoryInformation.PhysicalGPU.ArchitectInformation (GPUArchitectInformation)
+GPU.ECCMemoryInformation.PhysicalGPU.BaseClockFrequencies = [BaseClock] 3D Graphics = 10,20,000 kHz - Memory = 1,20,01,000 kHz - Video Decoding = N/A - Processor = N/A
+
+>>> Found Sub-Module: GPU.ECCMemoryInformation.PhysicalGPU.Bios (VideoBIOS)
+GPU.ECCMemoryInformation.PhysicalGPU.Board = Unknown
+GPU.ECCMemoryInformation.PhysicalGPU.BoostClockFrequencies = [BoostClock] 3D Graphics = 15,00,000 kHz - Memory = 1,20,01,000 kHz - Video Decoding = N/A - Processor = N/A
+
+>>> Found Sub-Module: GPU.ECCMemoryInformation.PhysicalGPU.BusInformation (GPUBusInformation)
+
+>>> Found Sub-Module: GPU.ECCMemoryInformation.PhysicalGPU.CoolerInformation (GPUCoolerInformation)
+
+>>> Found Sub-Module: GPU.ECCMemoryInformation.PhysicalGPU.CorrespondingLogicalGPU (LogicalGPU)
+GPU.ECCMemoryInformation.PhysicalGPU.CurrentClockFrequencies = [CurrentClock] 3D Graphics = 5,10,000 kHz - Memory = 90,01,000 kHz - Video Decoding = N/A - Processor = N/A
+GPU.ECCMemoryInformation.PhysicalGPU.DriverModel = 12800
+
+>>> Found Sub-Module: GPU.ECCMemoryInformation.PhysicalGPU.ECCMemoryInformation (ECCMemoryInformation)
+GPU.ECCMemoryInformation.PhysicalGPU.Foundry = [LOCKED/UNAVAILABLE]
+GPU.ECCMemoryInformation.PhysicalGPU.FullName = NVIDIA GeForce RTX 5050 Laptop GPU
+GPU.ECCMemoryInformation.PhysicalGPU.GPUId = 256
+GPU.ECCMemoryInformation.PhysicalGPU.GPUType = Discrete
+GPU.ECCMemoryInformation.PhysicalGPU.Handle = PhysicalGPUHandle #256
+GPU.ECCMemoryInformation.PhysicalGPU.IsQuadro = False
+
+>>> Found Sub-Module: GPU.ECCMemoryInformation.PhysicalGPU.MemoryInformation (GPUMemoryInformation)
+
+>>> Found Sub-Module: GPU.ECCMemoryInformation.PhysicalGPU.PerformanceControl (GPUPerformanceControl)
+
+>>> Found Sub-Module: GPU.ECCMemoryInformation.PhysicalGPU.PerformanceStatesInfo (GPUPerformanceStatesInformation)
+
+>>> Found Sub-Module: GPU.ECCMemoryInformation.PhysicalGPU.PowerTopologyInformation (GPUPowerTopologyInformation)
+GPU.ECCMemoryInformation.PhysicalGPU.SystemType = Laptop
+
+>>> Found Sub-Module: GPU.ECCMemoryInformation.PhysicalGPU.ThermalInformation (GPUThermalInformation)
+
+>>> Found Sub-Module: GPU.ECCMemoryInformation.PhysicalGPU.UsageInformation (GPUUsageInformation)
+GPU.Foundry = [LOCKED/UNAVAILABLE]
+GPU.FullName = NVIDIA GeForce RTX 5050 Laptop GPU
+GPU.GPUId = 256
+GPU.GPUType = Discrete
+GPU.Handle = PhysicalGPUHandle #256
+GPU.IsQuadro = False
+
+>>> Found Sub-Module: GPU.MemoryInformation (GPUMemoryInformation)
+GPU.MemoryInformation.FrameBufferBandwidth = 128
+GPU.MemoryInformation.FrameBufferLocation = 1
+GPU.MemoryInformation.InternalClockToBusClockFactor = [LOCKED/UNAVAILABLE]
+GPU.MemoryInformation.InternalClockToTransferRateFactor = [LOCKED/UNAVAILABLE]
+GPU.MemoryInformation.PhysicalFrameBufferSizeInkB = 8346176
+
+>>> Found Sub-Module: GPU.MemoryInformation.PhysicalGPU (PhysicalGPU)
+GPU.MemoryInformation.PhysicalGPU.ActiveOutputs = [Collection: 0 items]
+
+>>> Found Sub-Module: GPU.MemoryInformation.PhysicalGPU.ArchitectInformation (GPUArchitectInformation)
+GPU.MemoryInformation.PhysicalGPU.BaseClockFrequencies = [BaseClock] 3D Graphics = 10,20,000 kHz - Memory = 1,20,01,000 kHz - Video Decoding = N/A - Processor = N/A
+
+>>> Found Sub-Module: GPU.MemoryInformation.PhysicalGPU.Bios (VideoBIOS)
+GPU.MemoryInformation.PhysicalGPU.Board = Unknown
+GPU.MemoryInformation.PhysicalGPU.BoostClockFrequencies = [BoostClock] 3D Graphics = 15,00,000 kHz - Memory = 1,20,01,000 kHz - Video Decoding = N/A - Processor = N/A
+
+>>> Found Sub-Module: GPU.MemoryInformation.PhysicalGPU.BusInformation (GPUBusInformation)
+
+>>> Found Sub-Module: GPU.MemoryInformation.PhysicalGPU.CoolerInformation (GPUCoolerInformation)
+
+>>> Found Sub-Module: GPU.MemoryInformation.PhysicalGPU.CorrespondingLogicalGPU (LogicalGPU)
+GPU.MemoryInformation.PhysicalGPU.CurrentClockFrequencies = [CurrentClock] 3D Graphics = 5,10,000 kHz - Memory = 90,01,000 kHz - Video Decoding = N/A - Processor = N/A
+GPU.MemoryInformation.PhysicalGPU.DriverModel = 12800
+
+>>> Found Sub-Module: GPU.MemoryInformation.PhysicalGPU.ECCMemoryInformation (ECCMemoryInformation)
+GPU.MemoryInformation.PhysicalGPU.Foundry = [LOCKED/UNAVAILABLE]
+GPU.MemoryInformation.PhysicalGPU.FullName = NVIDIA GeForce RTX 5050 Laptop GPU
+GPU.MemoryInformation.PhysicalGPU.GPUId = 256
+GPU.MemoryInformation.PhysicalGPU.GPUType = Discrete
+GPU.MemoryInformation.PhysicalGPU.Handle = PhysicalGPUHandle #256
+GPU.MemoryInformation.PhysicalGPU.IsQuadro = False
+
+>>> Found Sub-Module: GPU.MemoryInformation.PhysicalGPU.MemoryInformation (GPUMemoryInformation)
+
+>>> Found Sub-Module: GPU.MemoryInformation.PhysicalGPU.PerformanceControl (GPUPerformanceControl)
+
+>>> Found Sub-Module: GPU.MemoryInformation.PhysicalGPU.PerformanceStatesInfo (GPUPerformanceStatesInformation)
+
+>>> Found Sub-Module: GPU.MemoryInformation.PhysicalGPU.PowerTopologyInformation (GPUPowerTopologyInformation)
+GPU.MemoryInformation.PhysicalGPU.SystemType = Laptop
+
+>>> Found Sub-Module: GPU.MemoryInformation.PhysicalGPU.ThermalInformation (GPUThermalInformation)
+
+>>> Found Sub-Module: GPU.MemoryInformation.PhysicalGPU.UsageInformation (GPUUsageInformation)
+GPU.MemoryInformation.RAMBanks = 1
+GPU.MemoryInformation.RAMBusWidth = 128
+GPU.MemoryInformation.RAMMaker = Samsung
+GPU.MemoryInformation.RAMType = 16
+GPU.MemoryInformation.VirtualFrameBufferSizeInkB = 8346624
+GPU.MemoryInformation.AvailableDedicatedVideoMemoryInkB = 8099840
+GPU.MemoryInformation.CurrentAvailableDedicatedVideoMemoryInkB = 8099840
+GPU.MemoryInformation.DedicatedVideoMemoryInkB = 8346624
+GPU.MemoryInformation.SharedSystemMemoryInkB = 12219576
+GPU.MemoryInformation.SystemVideoMemoryInkB = 0
+
+>>> Found Sub-Module: GPU.PerformanceControl (GPUPerformanceControl)
+GPU.PerformanceControl.CurrentActiveLimit = PowerLimit
+GPU.PerformanceControl.CurrentPerformanceDecreaseReason = None
+GPU.PerformanceControl.IsNoLoadLimitSupported = True
+GPU.PerformanceControl.IsPowerLimitSupported = True
+GPU.PerformanceControl.IsTemperatureLimitSupported = True
+GPU.PerformanceControl.IsVoltageLimitSupported = True
+
+>>> Found Sub-Module: GPU.PerformanceControl.PhysicalGPU (PhysicalGPU)
+GPU.PerformanceControl.PhysicalGPU.ActiveOutputs = [Collection: 0 items]
+
+>>> Found Sub-Module: GPU.PerformanceControl.PhysicalGPU.ArchitectInformation (GPUArchitectInformation)
+GPU.PerformanceControl.PhysicalGPU.BaseClockFrequencies = [BaseClock] 3D Graphics = 10,20,000 kHz - Memory = 1,20,01,000 kHz - Video Decoding = N/A - Processor = N/A
+
+>>> Found Sub-Module: GPU.PerformanceControl.PhysicalGPU.Bios (VideoBIOS)
+GPU.PerformanceControl.PhysicalGPU.Board = Unknown
+GPU.PerformanceControl.PhysicalGPU.BoostClockFrequencies = [BoostClock] 3D Graphics = 15,00,000 kHz - Memory = 1,20,01,000 kHz - Video Decoding = N/A - Processor = N/A
+
+>>> Found Sub-Module: GPU.PerformanceControl.PhysicalGPU.BusInformation (GPUBusInformation)
+
+>>> Found Sub-Module: GPU.PerformanceControl.PhysicalGPU.CoolerInformation (GPUCoolerInformation)
+
+>>> Found Sub-Module: GPU.PerformanceControl.PhysicalGPU.CorrespondingLogicalGPU (LogicalGPU)
+GPU.PerformanceControl.PhysicalGPU.CurrentClockFrequencies = [CurrentClock] 3D Graphics = 5,10,000 kHz - Memory = 90,01,000 kHz - Video Decoding = N/A - Processor = N/A
+GPU.PerformanceControl.PhysicalGPU.DriverModel = 12800
+
+>>> Found Sub-Module: GPU.PerformanceControl.PhysicalGPU.ECCMemoryInformation (ECCMemoryInformation)
+GPU.PerformanceControl.PhysicalGPU.Foundry = [LOCKED/UNAVAILABLE]
+GPU.PerformanceControl.PhysicalGPU.FullName = NVIDIA GeForce RTX 5050 Laptop GPU
+GPU.PerformanceControl.PhysicalGPU.GPUId = 256
+GPU.PerformanceControl.PhysicalGPU.GPUType = Discrete
+GPU.PerformanceControl.PhysicalGPU.Handle = PhysicalGPUHandle #256
+GPU.PerformanceControl.PhysicalGPU.IsQuadro = False
+
+>>> Found Sub-Module: GPU.PerformanceControl.PhysicalGPU.MemoryInformation (GPUMemoryInformation)
+
+>>> Found Sub-Module: GPU.PerformanceControl.PhysicalGPU.PerformanceControl (GPUPerformanceControl)
+
+>>> Found Sub-Module: GPU.PerformanceControl.PhysicalGPU.PerformanceStatesInfo (GPUPerformanceStatesInformation)
+
+>>> Found Sub-Module: GPU.PerformanceControl.PhysicalGPU.PowerTopologyInformation (GPUPowerTopologyInformation)
+GPU.PerformanceControl.PhysicalGPU.SystemType = Laptop
+
+>>> Found Sub-Module: GPU.PerformanceControl.PhysicalGPU.ThermalInformation (GPUThermalInformation)
+
+>>> Found Sub-Module: GPU.PerformanceControl.PhysicalGPU.UsageInformation (GPUUsageInformation)
+GPU.PerformanceControl.PowerLimitInformation = [Collection: 0 items]
+GPU.PerformanceControl.PowerLimitPolicies = [Collection: 0 items]
+GPU.PerformanceControl.ThermalLimitInformation = [Collection: 1 items]
+GPU.PerformanceControl.ThermalLimitPolicies = [Collection: 1 items]
+
+>>> Found Sub-Module: GPU.PerformanceStatesInfo (GPUPerformanceStatesInformation)
+
+>>> Found Sub-Module: GPU.PerformanceStatesInfo.CurrentPerformanceState (GPUPerformanceState)
+GPU.PerformanceStatesInfo.CurrentPerformanceState.Clocks = [Collection: 3 items]
+GPU.PerformanceStatesInfo.CurrentPerformanceState.IsReadOnly = True
+
+>>> Found Sub-Module: GPU.PerformanceStatesInfo.CurrentPerformanceState.PCIeInformation (PCIeInformation)
+GPU.PerformanceStatesInfo.CurrentPerformanceState.StateId = P4
+GPU.PerformanceStatesInfo.CurrentPerformanceState.StateIndex = 2
+GPU.PerformanceStatesInfo.CurrentPerformanceState.Voltages = [Collection: 0 items]
+GPU.PerformanceStatesInfo.GlobalVoltages = [Collection: 0 items]
+GPU.PerformanceStatesInfo.IsReadOnly = False
+GPU.PerformanceStatesInfo.PerformanceStates = [Collection: 5 items]
+
+>>> Found Sub-Module: GPU.PowerTopologyInformation (GPUPowerTopologyInformation)
+
+>>> Found Sub-Module: GPU.PowerTopologyInformation.PhysicalGPU (PhysicalGPU)
+GPU.PowerTopologyInformation.PhysicalGPU.ActiveOutputs = [Collection: 0 items]
+
+>>> Found Sub-Module: GPU.PowerTopologyInformation.PhysicalGPU.ArchitectInformation (GPUArchitectInformation)
+GPU.PowerTopologyInformation.PhysicalGPU.BaseClockFrequencies = [BaseClock] 3D Graphics = 10,20,000 kHz - Memory = 1,20,01,000 kHz - Video Decoding = N/A - Processor = N/A
+
+>>> Found Sub-Module: GPU.PowerTopologyInformation.PhysicalGPU.Bios (VideoBIOS)
+GPU.PowerTopologyInformation.PhysicalGPU.Board = Unknown
+GPU.PowerTopologyInformation.PhysicalGPU.BoostClockFrequencies = [BoostClock] 3D Graphics = 15,00,000 kHz - Memory = 1,20,01,000 kHz - Video Decoding = N/A - Processor = N/A
+
+>>> Found Sub-Module: GPU.PowerTopologyInformation.PhysicalGPU.BusInformation (GPUBusInformation)
+
+>>> Found Sub-Module: GPU.PowerTopologyInformation.PhysicalGPU.CoolerInformation (GPUCoolerInformation)
+
+>>> Found Sub-Module: GPU.PowerTopologyInformation.PhysicalGPU.CorrespondingLogicalGPU (LogicalGPU)
+GPU.PowerTopologyInformation.PhysicalGPU.CurrentClockFrequencies = [CurrentClock] 3D Graphics = 5,10,000 kHz - Memory = 90,01,000 kHz - Video Decoding = N/A - Processor = N/A
+GPU.PowerTopologyInformation.PhysicalGPU.DriverModel = 12800
+
+>>> Found Sub-Module: GPU.PowerTopologyInformation.PhysicalGPU.ECCMemoryInformation (ECCMemoryInformation)
+GPU.PowerTopologyInformation.PhysicalGPU.Foundry = [LOCKED/UNAVAILABLE]
+GPU.PowerTopologyInformation.PhysicalGPU.FullName = NVIDIA GeForce RTX 5050 Laptop GPU
+GPU.PowerTopologyInformation.PhysicalGPU.GPUId = 256
+GPU.PowerTopologyInformation.PhysicalGPU.GPUType = Discrete
+GPU.PowerTopologyInformation.PhysicalGPU.Handle = PhysicalGPUHandle #256
+GPU.PowerTopologyInformation.PhysicalGPU.IsQuadro = False
+
+>>> Found Sub-Module: GPU.PowerTopologyInformation.PhysicalGPU.MemoryInformation (GPUMemoryInformation)
+
+>>> Found Sub-Module: GPU.PowerTopologyInformation.PhysicalGPU.PerformanceControl (GPUPerformanceControl)
+
+>>> Found Sub-Module: GPU.PowerTopologyInformation.PhysicalGPU.PerformanceStatesInfo (GPUPerformanceStatesInformation)
+
+>>> Found Sub-Module: GPU.PowerTopologyInformation.PhysicalGPU.PowerTopologyInformation (GPUPowerTopologyInformation)
+GPU.PowerTopologyInformation.PhysicalGPU.SystemType = Laptop
+
+>>> Found Sub-Module: GPU.PowerTopologyInformation.PhysicalGPU.ThermalInformation (GPUThermalInformation)
+
+>>> Found Sub-Module: GPU.PowerTopologyInformation.PhysicalGPU.UsageInformation (GPUUsageInformation)
+GPU.PowerTopologyInformation.PowerTopologyEntries = [Collection: 0 items]
+GPU.SystemType = Laptop
+
+>>> Found Sub-Module: GPU.ThermalInformation (GPUThermalInformation)
+GPU.ThermalInformation.CurrentThermalLevel = [LOCKED/UNAVAILABLE]
+
+>>> Found Sub-Module: GPU.ThermalInformation.PhysicalGPU (PhysicalGPU)
+GPU.ThermalInformation.PhysicalGPU.ActiveOutputs = [Collection: 0 items]
+
+>>> Found Sub-Module: GPU.ThermalInformation.PhysicalGPU.ArchitectInformation (GPUArchitectInformation)
+GPU.ThermalInformation.PhysicalGPU.BaseClockFrequencies = [BaseClock] 3D Graphics = 10,20,000 kHz - Memory = 1,20,01,000 kHz - Video Decoding = N/A - Processor = N/A
+
+>>> Found Sub-Module: GPU.ThermalInformation.PhysicalGPU.Bios (VideoBIOS)
+GPU.ThermalInformation.PhysicalGPU.Board = Unknown
+GPU.ThermalInformation.PhysicalGPU.BoostClockFrequencies = [BoostClock] 3D Graphics = 15,00,000 kHz - Memory = 1,20,01,000 kHz - Video Decoding = N/A - Processor = N/A
+
+>>> Found Sub-Module: GPU.ThermalInformation.PhysicalGPU.BusInformation (GPUBusInformation)
+
+>>> Found Sub-Module: GPU.ThermalInformation.PhysicalGPU.CoolerInformation (GPUCoolerInformation)
+
+>>> Found Sub-Module: GPU.ThermalInformation.PhysicalGPU.CorrespondingLogicalGPU (LogicalGPU)
+GPU.ThermalInformation.PhysicalGPU.CurrentClockFrequencies = [CurrentClock] 3D Graphics = 5,10,000 kHz - Memory = 90,01,000 kHz - Video Decoding = N/A - Processor = N/A
+GPU.ThermalInformation.PhysicalGPU.DriverModel = 12800
+
+>>> Found Sub-Module: GPU.ThermalInformation.PhysicalGPU.ECCMemoryInformation (ECCMemoryInformation)
+GPU.ThermalInformation.PhysicalGPU.Foundry = [LOCKED/UNAVAILABLE]
+GPU.ThermalInformation.PhysicalGPU.FullName = NVIDIA GeForce RTX 5050 Laptop GPU
+GPU.ThermalInformation.PhysicalGPU.GPUId = 256
+GPU.ThermalInformation.PhysicalGPU.GPUType = Discrete
+GPU.ThermalInformation.PhysicalGPU.Handle = PhysicalGPUHandle #256
+GPU.ThermalInformation.PhysicalGPU.IsQuadro = False
+
+>>> Found Sub-Module: GPU.ThermalInformation.PhysicalGPU.MemoryInformation (GPUMemoryInformation)
+
+>>> Found Sub-Module: GPU.ThermalInformation.PhysicalGPU.PerformanceControl (GPUPerformanceControl)
+
+>>> Found Sub-Module: GPU.ThermalInformation.PhysicalGPU.PerformanceStatesInfo (GPUPerformanceStatesInformation)
+
+>>> Found Sub-Module: GPU.ThermalInformation.PhysicalGPU.PowerTopologyInformation (GPUPowerTopologyInformation)
+GPU.ThermalInformation.PhysicalGPU.SystemType = Laptop
+
+>>> Found Sub-Module: GPU.ThermalInformation.PhysicalGPU.ThermalInformation (GPUThermalInformation)
+
+>>> Found Sub-Module: GPU.ThermalInformation.PhysicalGPU.UsageInformation (GPUUsageInformation)
+GPU.ThermalInformation.ThermalSensors = [Collection: 1 items]
+
+>>> Found Sub-Module: GPU.UsageInformation (GPUUsageInformation)
+
+>>> Found Sub-Module: GPU.UsageInformation.BusInterface (GPUUsageDomainStatus)
+GPU.UsageInformation.BusInterface.Domain = BusInterface
+GPU.UsageInformation.BusInterface.Percentage = 49
+
+>>> Found Sub-Module: GPU.UsageInformation.FrameBuffer (GPUUsageDomainStatus)
+GPU.UsageInformation.FrameBuffer.Domain = FrameBuffer
+GPU.UsageInformation.FrameBuffer.Percentage = 0
+
+>>> Found Sub-Module: GPU.UsageInformation.GPU (GPUUsageDomainStatus)
+GPU.UsageInformation.GPU.Domain = GPU
+GPU.UsageInformation.GPU.Percentage = 0
+GPU.UsageInformation.IsDynamicPerformanceStatesEnabled = False
+
+>>> Found Sub-Module: GPU.UsageInformation.PhysicalGPU (PhysicalGPU)
+GPU.UsageInformation.PhysicalGPU.ActiveOutputs = [Collection: 0 items]
+
+>>> Found Sub-Module: GPU.UsageInformation.PhysicalGPU.ArchitectInformation (GPUArchitectInformation)
+GPU.UsageInformation.PhysicalGPU.BaseClockFrequencies = [BaseClock] 3D Graphics = 10,20,000 kHz - Memory = 1,20,01,000 kHz - Video Decoding = N/A - Processor = N/A
+
+>>> Found Sub-Module: GPU.UsageInformation.PhysicalGPU.Bios (VideoBIOS)
+GPU.UsageInformation.PhysicalGPU.Board = Unknown
+GPU.UsageInformation.PhysicalGPU.BoostClockFrequencies = [BoostClock] 3D Graphics = 15,00,000 kHz - Memory = 1,20,01,000 kHz - Video Decoding = N/A - Processor = N/A
+
+>>> Found Sub-Module: GPU.UsageInformation.PhysicalGPU.BusInformation (GPUBusInformation)
+
+>>> Found Sub-Module: GPU.UsageInformation.PhysicalGPU.CoolerInformation (GPUCoolerInformation)
+
+>>> Found Sub-Module: GPU.UsageInformation.PhysicalGPU.CorrespondingLogicalGPU (LogicalGPU)
+GPU.UsageInformation.PhysicalGPU.CurrentClockFrequencies = [CurrentClock] 3D Graphics = 5,10,000 kHz - Memory = 90,01,000 kHz - Video Decoding = N/A - Processor = N/A
+GPU.UsageInformation.PhysicalGPU.DriverModel = 12800
+
+>>> Found Sub-Module: GPU.UsageInformation.PhysicalGPU.ECCMemoryInformation (ECCMemoryInformation)
+GPU.UsageInformation.PhysicalGPU.Foundry = [LOCKED/UNAVAILABLE]
+GPU.UsageInformation.PhysicalGPU.FullName = NVIDIA GeForce RTX 5050 Laptop GPU
+GPU.UsageInformation.PhysicalGPU.GPUId = 256
+GPU.UsageInformation.PhysicalGPU.GPUType = Discrete
+GPU.UsageInformation.PhysicalGPU.Handle = PhysicalGPUHandle #256
+GPU.UsageInformation.PhysicalGPU.IsQuadro = False
+
+>>> Found Sub-Module: GPU.UsageInformation.PhysicalGPU.MemoryInformation (GPUMemoryInformation)
+
+>>> Found Sub-Module: GPU.UsageInformation.PhysicalGPU.PerformanceControl (GPUPerformanceControl)
+
+>>> Found Sub-Module: GPU.UsageInformation.PhysicalGPU.PerformanceStatesInfo (GPUPerformanceStatesInformation)
+
+>>> Found Sub-Module: GPU.UsageInformation.PhysicalGPU.PowerTopologyInformation (GPUPowerTopologyInformation)
+GPU.UsageInformation.PhysicalGPU.SystemType = Laptop
+
+>>> Found Sub-Module: GPU.UsageInformation.PhysicalGPU.ThermalInformation (GPUThermalInformation)
+
+>>> Found Sub-Module: GPU.UsageInformation.PhysicalGPU.UsageInformation (GPUUsageInformation)
+GPU.UsageInformation.UtilizationDomainsStatus = [Collection: 4 items]
+
+>>> Found Sub-Module: GPU.UsageInformation.VideoEngine (GPUUsageDomainStatus)
+GPU.UsageInformation.VideoEngine.Domain = VideoEngine
+GPU.UsageInformation.VideoEngine.Percentage = 0
