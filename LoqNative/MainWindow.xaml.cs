@@ -43,6 +43,11 @@ namespace LoqNative
         private const uint VK_S = 0x53;
         private const int HOTKEY_SCREENOFF_ID = 9003;
 
+        // Key code for 'T' (Telemetry Report)
+        private const uint VK_T = 0x54;
+        private const int HOTKEY_REPORT_ID = 9004;
+        private object? _lastStats;
+
         private DispatcherTimer? _telemetryTimer;
         private System.Windows.Forms.NotifyIcon? _notifyIcon;
         private LoqThermalMode _lastKnownThermalMode = (LoqThermalMode)0;
@@ -64,6 +69,8 @@ namespace LoqNative
         public MainWindow()
         {
             InitializeComponent();
+            
+            // Initialize NVAPI Telemetry Engine
             GpuTelemetryEngine.Initialize();
             
             var desktopWorkingArea = SystemParameters.WorkArea;
@@ -104,6 +111,9 @@ namespace LoqNative
             
             // New Screen Off Hotkey (Alt + S)
             RegisterHotKey(hwnd, HOTKEY_SCREENOFF_ID, MOD_ALT, VK_S); 
+
+            // New Telemetry Report Hotkey (Alt + T)
+            RegisterHotKey(hwnd, HOTKEY_REPORT_ID, MOD_ALT, VK_T); 
             
             HwndSource.FromHwnd(hwnd)?.AddHook(HwndHook);
         }
@@ -159,6 +169,10 @@ namespace LoqNative
                             SendMessage(hwnd, WM_SYSCOMMAND, (IntPtr)SC_MONITORPOWER, (IntPtr)MONITOR_TURN_OFF);
                         });
                     });
+                }
+                else if (keyId == HOTKEY_REPORT_ID) {
+                    handled = true;
+                    if (_lastStats != null) LoqNative.Core.TelemetryLogger.DumpReport(_lastStats);
                 }
             }
             return IntPtr.Zero;
@@ -443,32 +457,44 @@ namespace LoqNative
 
         private async Task UpdateDashboardAsync()
         {
+            var nvGpuState = GpuTelemetryEngine.GetLiveTelemetry();
+
             var stats = await Task.Run(() => 
             {
-                uint gTemp = WmiEngine.GetFeatureValue((uint)LoqTelemetryId.GpuTemperature);
+                uint fallbackGpuTemp = WmiEngine.GetFeatureValue((uint)LoqTelemetryId.GpuTemperature);
                 var battery = OsTelemetry.GetBatteryInfo();
                 var ram = OsTelemetry.GetRamDetails();
-                var nvGpuState = GpuTelemetryEngine.GetLiveTelemetry();
                 
                 return new 
                 {
                     CpuTemp = WmiEngine.GetFeatureValue((uint)LoqTelemetryId.CpuTemperature),
-                    GpuTemp = gTemp,
                     CpuFan = WmiEngine.GetFeatureValue((uint)LoqTelemetryId.CpuFanSpeed),
                     GpuFan = WmiEngine.GetFeatureValue((uint)LoqTelemetryId.GpuFanSpeed),
                     CpuUsage = OsTelemetry.GetCpuUsage(),
                     CpuClock = OsTelemetry.GetCpuClock(),
                     Ram = ram,
-                    Gpu = OsTelemetry.GetNvidiaGpuStats(gTemp),
                     Battery = battery,
                     LiveThermalMode = WmiEngine.GetCurrentThermalMode(),
-                    CpuW = !battery.IsCharging && battery.Wattage > 0 ? Math.Max(0, battery.Wattage - OsTelemetry.GetNvidiaGpuStats(gTemp).Wattage - 10) : 0
+                    
+                    // Fallback to WMI/OS telemetry if NVAPI returns null (e.g. GPU is in D3Cold sleep state)
+                    GpuTemp = nvGpuState?.CoreTemp > 0 ? (uint)nvGpuState.CoreTemp : fallbackGpuTemp,
+                    GpuUsage = nvGpuState != null ? nvGpuState.CoreUsage : OsTelemetry.GetNvidiaGpuStats(fallbackGpuTemp).Usage,
+                    GpuCoreClock = nvGpuState?.CoreClockMHz ?? 0,
+                    GpuVramUsage = nvGpuState?.VramUsage ?? 0,
+                    GpuWattage = OsTelemetry.GetNvidiaGpuStats(fallbackGpuTemp).Wattage
                 };
             });
 
+            _lastStats = stats;
+
+            // Calculate estimated CPU package power
+            double calcCpuW = !stats.Battery.IsCharging && stats.Battery.Wattage > 0 
+                ? Math.Max(0, stats.Battery.Wattage - stats.GpuWattage - 10) 
+                : 0;
+
             if (_osdWindow.IsVisible) {
                 var fpsData = EtwFpsMonitor.GetFps();
-                _osdWindow.UpdateStats(fpsData.Avg, fpsData.Low, stats.CpuTemp, stats.GpuTemp, stats.CpuFan, stats.GpuFan, stats.CpuUsage, stats.Gpu.Usage, stats.Gpu.Wattage, stats.CpuW);
+                _osdWindow.UpdateStats(fpsData.Avg, fpsData.Low, stats.CpuTemp, stats.GpuTemp, stats.CpuFan, stats.GpuFan, stats.CpuUsage, stats.GpuUsage, stats.GpuWattage, calcCpuW);
             }
 
             if (!this.IsVisible) return; 
@@ -481,7 +507,7 @@ namespace LoqNative
 
             GpuData1.Text = stats.GpuTemp > 0 ? $"{stats.GpuTemp}°C" : "--°C";
             GpuData2.Text = stats.GpuFan > 0 ? $"{stats.GpuFan} RPM" : "0 RPM";
-            GpuData3.Text = $"{stats.Gpu.Usage}%"; 
+            GpuData3.Text = $"{stats.GpuUsage}%";
 
             string battStatus = stats.Battery.IsCharging ? "Charging" : "Discharging";
             BatteryWattage.Text = stats.Battery.Wattage > 0 ? $"{battStatus}: {stats.Battery.Wattage:0.0} W" : $"{battStatus}: -- W";
@@ -494,8 +520,13 @@ namespace LoqNative
         {
             var hwnd = new WindowInteropHelper(this).Handle;
             UnregisterHotKey(hwnd, HOTKEY_ID);
+            UnregisterHotKey(hwnd, HOTKEY_SCREENOFF_ID);
+            UnregisterHotKey(hwnd, HOTKEY_REPORT_ID);
             _notifyIcon?.Dispose(); 
+            
+            // Clean up the NVAPI hook
             GpuTelemetryEngine.Shutdown();
+            
             base.OnClosed(e);
         }
 

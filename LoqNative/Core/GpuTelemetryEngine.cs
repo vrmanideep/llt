@@ -16,7 +16,7 @@ namespace LoqNative.Core
 
     public static class GpuTelemetryEngine
     {
-        private static PhysicalGPU _gpu;
+        private static PhysicalGPU? _gpu;
         private static bool _isInitialized = false;
 
         public static void Initialize()
@@ -24,13 +24,17 @@ namespace LoqNative.Core
             try
             {
                 NVIDIA.Initialize();
-                _gpu = PhysicalGPU.GetPhysicalGPUs().FirstOrDefault();
-                if (_gpu != null) _isInitialized = true;
+                var gpus = PhysicalGPU.GetPhysicalGPUs();
+                if (gpus.Length > 0)
+                {
+                    _gpu = gpus[0];
+                    _isInitialized = true;
+                }
             }
             catch { _isInitialized = false; }
         }
 
-        public static GpuState GetLiveTelemetry()
+        public static GpuState? GetLiveTelemetry()
         {
             if (!_isInitialized || _gpu == null) return null;
 
@@ -38,7 +42,7 @@ namespace LoqNative.Core
 
             try
             {
-                // 1. Temperature (Safely pulling the first available sensor)
+                // 1. Temperature
                 var thermalSensors = _gpu.ThermalInformation.ThermalSensors.ToArray();
                 if (thermalSensors.Length > 0)
                 {
@@ -49,20 +53,39 @@ namespace LoqNative.Core
                 var usage = _gpu.UsageInformation;
                 state.CoreUsage = (uint)usage.GPU.Percentage;
                 
-                // Calculate VRAM usage based on Total minus Available
                 var memInfo = _gpu.MemoryInformation;
                 double totalVram = memInfo.DedicatedVideoMemoryInkB;
                 double availVram = memInfo.CurrentAvailableDedicatedVideoMemoryInkB;
-                state.VramUsage = (uint)(((totalVram - availVram) / totalVram) * 100);
+                if (totalVram > 0) 
+                {
+                    state.VramUsage = (uint)(((totalVram - availVram) / totalVram) * 100);
+                }
 
-                // 3. Current Clocks (Converting kHz to MHz)
-                var clocks = _gpu.CurrentClockFrequencies;
+                // 3. Current Clocks (String Parsing to bypass library versioning errors)
+                string clockDump = _gpu.CurrentClockFrequencies.ToString();
                 
-                var coreClock = clocks.FirstOrDefault(c => c.Key == NvAPIWrapper.Native.GPU.PublicClockDomain.Graphics);
-                if (coreClock.Value != null) state.CoreClockMHz = (int)(coreClock.Value.FrequencyInkHz / 1000);
-
-                var memClock = clocks.FirstOrDefault(c => c.Key == NvAPIWrapper.Native.GPU.PublicClockDomain.Memory);
-                if (memClock.Value != null) state.VramClockMHz = (int)(memClock.Value.FrequencyInkHz / 1000);
+                // Splits "[CurrentClock] 3D Graphics = 5,10,000 kHz - Memory = 90,01,000 kHz"
+                string[] clockParts = clockDump.Split('-');
+                foreach (var part in clockParts)
+                {
+                    if (part.Contains("3D Graphics"))
+                    {
+                        // Extracts only digits (stripping out commas and 'kHz')
+                        string numericVal = new string(part.Where(char.IsDigit).ToArray());
+                        if (int.TryParse(numericVal, out int khz)) 
+                        {
+                            state.CoreClockMHz = khz / 1000;
+                        }
+                    }
+                    else if (part.Contains("Memory"))
+                    {
+                        string numericVal = new string(part.Where(char.IsDigit).ToArray());
+                        if (int.TryParse(numericVal, out int khz)) 
+                        {
+                            state.VramClockMHz = khz / 1000;
+                        }
+                    }
+                }
             }
             catch 
             {
