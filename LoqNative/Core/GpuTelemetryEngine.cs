@@ -62,27 +62,30 @@ namespace LoqNative.Core
                 }
 
                 // 3. Current Clocks (String Parsing to bypass library versioning errors)
-                string clockDump = _gpu.CurrentClockFrequencies.ToString();
+                string? clockDump = _gpu.CurrentClockFrequencies?.ToString();
                 
-                // Splits "[CurrentClock] 3D Graphics = 5,10,000 kHz - Memory = 90,01,000 kHz"
-                string[] clockParts = clockDump.Split('-');
-                foreach (var part in clockParts)
+                if (!string.IsNullOrEmpty(clockDump))
                 {
-                    if (part.Contains("3D Graphics"))
+                    // Splits "[CurrentClock] 3D Graphics = 5,10,000 kHz - Memory = 90,01,000 kHz"
+                    string[] clockParts = clockDump.Split('-');
+                    foreach (var part in clockParts)
                     {
-                        // Extracts only digits (stripping out commas and 'kHz')
-                        string numericVal = new string(part.Where(char.IsDigit).ToArray());
-                        if (int.TryParse(numericVal, out int khz)) 
+                        if (part.Contains("3D Graphics"))
                         {
-                            state.CoreClockMHz = khz / 1000;
+                            // Extracts only digits (stripping out commas and 'kHz')
+                            string numericVal = new string(part.Where(char.IsDigit).ToArray());
+                            if (int.TryParse(numericVal, out int khz)) 
+                            {
+                                state.CoreClockMHz = khz / 1000;
+                            }
                         }
-                    }
-                    else if (part.Contains("Memory"))
-                    {
-                        string numericVal = new string(part.Where(char.IsDigit).ToArray());
-                        if (int.TryParse(numericVal, out int khz)) 
+                        else if (part.Contains("Memory"))
                         {
-                            state.VramClockMHz = khz / 1000;
+                            string numericVal = new string(part.Where(char.IsDigit).ToArray());
+                            if (int.TryParse(numericVal, out int khz)) 
+                            {
+                                state.VramClockMHz = khz / 1000;
+                            }
                         }
                     }
                 }

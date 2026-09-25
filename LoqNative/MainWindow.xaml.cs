@@ -26,6 +26,8 @@ namespace LoqNative
         private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern uint SetThreadExecutionState(uint esFlags);
+        [DllImport("user32.dll")]
+        private static extern bool LockWorkStation();
 
         private const uint ES_CONTINUOUS = 0x80000000;
         private const uint ES_SYSTEM_REQUIRED = 0x00000001;
@@ -39,6 +41,12 @@ namespace LoqNative
         private const uint MOD_ALT = 0x0001;
         private const uint MOD_CONTROL = 0x0002;
         private const uint VK_L = 0x4C; // 'L' key -> Shortcut is Ctrl + Alt + L
+        private const int WM_SYSCOMMAND = 0x0112;
+        private const int SC_MONITORPOWER = 0xF170;
+        private const int MONITOR_TURN_OFF = 2;
+        
+        private const uint VK_S = 0x53;
+        private const int HOTKEY_SLEEP_ID = 9003;
 
         // Key code for 'T' (Telemetry Report)
         private const uint VK_T = 0x54;
@@ -105,6 +113,7 @@ namespace LoqNative
             // Existing Hotkeys
             RegisterHotKey(hwnd, HOTKEY_ID, MOD_ALT, VK_L); 
             RegisterHotKey(hwnd, HOTKEY_OSD_ID, MOD_CONTROL | MOD_ALT, VK_0);
+            RegisterHotKey(hwnd, HOTKEY_SLEEP_ID, MOD_ALT, VK_S);
             
             // New Telemetry Report Hotkey (Alt + T)
             RegisterHotKey(hwnd, HOTKEY_REPORT_ID, MOD_ALT, VK_T); 
@@ -159,6 +168,15 @@ namespace LoqNative
                 else if (keyId == HOTKEY_REPORT_ID) {
                     handled = true;
                     if (_lastStats != null) LoqNative.Core.TelemetryLogger.DumpReport(_lastStats);
+                }
+                else if (keyId == HOTKEY_SLEEP_ID) {
+                    handled = true;
+                    
+                    // 1. Instantly lock the Windows session
+                    LockWorkStation();
+                    
+                    // 2. Cut the display signal (which forces your LOQ into Modern Standby instantly)
+                    SendMessage(hwnd, WM_SYSCOMMAND, (IntPtr)SC_MONITORPOWER, (IntPtr)MONITOR_TURN_OFF);
                 }
             }
             return IntPtr.Zero;
@@ -505,6 +523,7 @@ namespace LoqNative
             var hwnd = new WindowInteropHelper(this).Handle;
             UnregisterHotKey(hwnd, HOTKEY_ID);
             UnregisterHotKey(hwnd, HOTKEY_REPORT_ID);
+            UnregisterHotKey(hwnd, HOTKEY_SLEEP_ID);
             _notifyIcon?.Dispose(); 
             
             GpuTelemetryEngine.Shutdown();
