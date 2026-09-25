@@ -24,6 +24,11 @@ namespace LoqNative
         private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
         [DllImport("user32.dll")]
         private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern uint SetThreadExecutionState(uint esFlags);
+
+        private const uint ES_CONTINUOUS = 0x80000000;
+        private const uint ES_SYSTEM_REQUIRED = 0x00000001;
 
         private const int HOTKEY_OSD_ID = 9001;
         private const uint VK_0 = 0x30; // '0' key -> Shortcut is Ctrl + Alt + 0
@@ -34,14 +39,6 @@ namespace LoqNative
         private const uint MOD_ALT = 0x0001;
         private const uint MOD_CONTROL = 0x0002;
         private const uint VK_L = 0x4C; // 'L' key -> Shortcut is Ctrl + Alt + L
-
-        private const int WM_SYSCOMMAND = 0x0112;
-        private const int SC_MONITORPOWER = 0xF170;
-        private const int MONITOR_TURN_OFF = 2;
-
-        // Key code for 'S' and a unique ID for this hotkey
-        private const uint VK_S = 0x53;
-        private const int HOTKEY_SCREENOFF_ID = 9003;
 
         // Key code for 'T' (Telemetry Report)
         private const uint VK_T = 0x54;
@@ -109,9 +106,6 @@ namespace LoqNative
             RegisterHotKey(hwnd, HOTKEY_ID, MOD_ALT, VK_L); 
             RegisterHotKey(hwnd, HOTKEY_OSD_ID, MOD_CONTROL | MOD_ALT, VK_0);
             
-            // New Screen Off Hotkey (Alt + S)
-            RegisterHotKey(hwnd, HOTKEY_SCREENOFF_ID, MOD_ALT, VK_S); 
-
             // New Telemetry Report Hotkey (Alt + T)
             RegisterHotKey(hwnd, HOTKEY_REPORT_ID, MOD_ALT, VK_T); 
             
@@ -149,6 +143,9 @@ namespace LoqNative
             {
                 int keyId = wParam.ToInt32();
                 if (keyId == HOTKEY_ID) {
+                    // Release the sleep lock so the laptop can sleep normally again
+                    SetThreadExecutionState(ES_CONTINUOUS); 
+
                     if (this.IsVisible) this.Hide();
                     else ShowAnimated(); 
                     handled = true;
@@ -158,17 +155,6 @@ namespace LoqNative
                     else _osdWindow.Show();
                     CheckTelemetryState();
                     handled = true;
-                }
-                else if (keyId == HOTKEY_SCREENOFF_ID) {
-                    handled = true;
-                    
-                    // Delay to prevent the physical key-release from waking the screen
-                    Task.Run(async () => {
-                        await Task.Delay(400); 
-                        System.Windows.Application.Current.Dispatcher.Invoke(() => {
-                            SendMessage(hwnd, WM_SYSCOMMAND, (IntPtr)SC_MONITORPOWER, (IntPtr)MONITOR_TURN_OFF);
-                        });
-                    });
                 }
                 else if (keyId == HOTKEY_REPORT_ID) {
                     handled = true;
@@ -244,8 +230,9 @@ namespace LoqNative
 
         private void BtnThermalMode_Click(object sender, RoutedEventArgs e)
         {
+            if (sender is not System.Windows.Controls.Button btn) return;
+
             try {
-                var btn = sender as System.Windows.Controls.Button;
                 LoqThermalMode selectedMode = LoqThermalMode.Balanced;
 
                 if (btn == BtnQuiet) selectedMode = LoqThermalMode.Quiet;
@@ -287,8 +274,9 @@ namespace LoqNative
 
         private void BtnGpuMode_Click(object sender, RoutedEventArgs e)
         {
+            if (sender is not System.Windows.Controls.Button btn) return;
+
             try {
-                var btn = sender as System.Windows.Controls.Button;
                 LoqGpuMode selectedMode = LoqGpuMode.Hybrid;
 
                 if (btn == BtnHybrid) selectedMode = LoqGpuMode.Hybrid;
@@ -403,9 +391,8 @@ namespace LoqNative
 
             try {
                 if (enable) {
-                    string exePath = Environment.ProcessPath;
+                    string? exePath = Environment.ProcessPath;
                     
-                    // 1. Create the base task
                     using var pCreate = new System.Diagnostics.Process();
                     pCreate.StartInfo.FileName = "schtasks.exe";
                     pCreate.StartInfo.Arguments = $"/create /tn \"LoqNative_Startup\" /tr \"\\\"{exePath}\\\" --silent\" /sc onlogon /rl highest /f";
@@ -419,7 +406,6 @@ namespace LoqNative
                         return;
                     }
 
-                    // 2. Permanently patch battery restrictions via PowerShell bridge
                     using var pPatch = new System.Diagnostics.Process();
                     pPatch.StartInfo.FileName = "powershell.exe";
                     pPatch.StartInfo.Arguments = "-NoProfile -WindowStyle Hidden -Command \"Set-ScheduledTask -TaskName 'LoqNative_Startup' -Settings (New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit 0)\"";
@@ -476,7 +462,6 @@ namespace LoqNative
                     Battery = battery,
                     LiveThermalMode = WmiEngine.GetCurrentThermalMode(),
                     
-                    // Fallback to WMI/OS telemetry if NVAPI returns null (e.g. GPU is in D3Cold sleep state)
                     GpuTemp = nvGpuState?.CoreTemp > 0 ? (uint)nvGpuState.CoreTemp : fallbackGpuTemp,
                     GpuUsage = nvGpuState != null ? nvGpuState.CoreUsage : OsTelemetry.GetNvidiaGpuStats(fallbackGpuTemp).Usage,
                     GpuCoreClock = nvGpuState?.CoreClockMHz ?? 0,
@@ -487,7 +472,6 @@ namespace LoqNative
 
             _lastStats = stats;
 
-            // Calculate estimated CPU package power
             double calcCpuW = !stats.Battery.IsCharging && stats.Battery.Wattage > 0 
                 ? Math.Max(0, stats.Battery.Wattage - stats.GpuWattage - 10) 
                 : 0;
@@ -520,11 +504,9 @@ namespace LoqNative
         {
             var hwnd = new WindowInteropHelper(this).Handle;
             UnregisterHotKey(hwnd, HOTKEY_ID);
-            UnregisterHotKey(hwnd, HOTKEY_SCREENOFF_ID);
             UnregisterHotKey(hwnd, HOTKEY_REPORT_ID);
             _notifyIcon?.Dispose(); 
             
-            // Clean up the NVAPI hook
             GpuTelemetryEngine.Shutdown();
             
             base.OnClosed(e);
