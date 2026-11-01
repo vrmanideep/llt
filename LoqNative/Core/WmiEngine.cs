@@ -7,7 +7,7 @@ using System.Linq;
 namespace LoqNative.Core
 {
     public enum LoqThermalMode : int { Quiet = 1, Balanced = 2, Performance = 3, Custom = 255 }
-    public enum LoqGpuMode : int { Hybrid = 0, IGPUOnly = 1, Auto = 2, DGPU = 3 }
+    public enum LoqGpuMode : int { Standard = 0, Eco = 1, Optimized = 2, Ultimate = 3 }
     public enum LoqBatteryMode : int { Conservation = 0, Normal = 1, RapidCharge = 2 }
     public enum LoqTelemetryId : uint { CpuTemperature = 0x05040000, GpuTemperature = 0x05050000, CpuFanSpeed = 0x04030001, GpuFanSpeed = 0x04030002 }
 
@@ -58,30 +58,29 @@ namespace LoqNative.Core
                 foreach (ManagementObject obj in results) {
                     using (obj) {
                         using ManagementBaseObject gSyncOut = obj.InvokeMethod("GetGSyncStatus", null, null);
-                        if (Convert.ToInt32(gSyncOut["Data"]) == 1) return LoqGpuMode.DGPU;
+                        if (Convert.ToInt32(gSyncOut["Data"]) == 1) return LoqGpuMode.Ultimate;
                         
                         using ManagementBaseObject iGpuOut = obj.InvokeMethod("GetIGPUModeStatus", null, null);
                         int status = Convert.ToInt32(iGpuOut["Data"]);
-                        if (status == 1) return LoqGpuMode.IGPUOnly;
-                        if (status == 2) return LoqGpuMode.Auto;
+                        if (status == 1) return LoqGpuMode.Eco;
+                        if (status == 2) return LoqGpuMode.Optimized;
                     }
                 }
             } catch { }
 
             try {
-                uint igpuStatus = GetFeatureValue(0x00010000); 
-                if (igpuStatus == 1) return LoqGpuMode.IGPUOnly;
-                if (igpuStatus == 2) return LoqGpuMode.Auto;
+                uint igpuStatus = GetFeatureValue(0x00010000);
+                if (igpuStatus == 1) return LoqGpuMode.Eco;
+                if (igpuStatus == 2) return LoqGpuMode.Optimized;
             } catch { }
 
-            return LoqGpuMode.Hybrid;
+            return LoqGpuMode.Standard;
         }
 
         public static void SetGpuMode(LoqGpuMode mode)
         {
-            int gSyncValue = mode == LoqGpuMode.DGPU ? 1 : 0;
-            uint igpuValue = mode switch { LoqGpuMode.IGPUOnly => 1, LoqGpuMode.Auto => 2, _ => 0 };
-
+            int gSyncValue = mode == LoqGpuMode.Ultimate ? 1 : 0;
+            uint igpuValue = mode switch { LoqGpuMode.Eco => 1, LoqGpuMode.Optimized => 2, _ => 0 };
             try {
                 using var searcher = new ManagementObjectSearcher(@"root\WMI", "SELECT * FROM LENOVO_GAMEZONE_DATA");
                 using var results = searcher.Get();

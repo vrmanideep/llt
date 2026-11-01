@@ -54,7 +54,7 @@ namespace LoqNative
 
         private bool? _wasCharging = null;
         private int _trackedGamePid = 0; 
-        private LoqGpuMode _targetGpuMode = LoqGpuMode.Hybrid;
+        private LoqGpuMode _targetGpuMode = LoqGpuMode.Standard;
         private object? _lastStats;
 
         private DispatcherTimer? _telemetryTimer;
@@ -263,27 +263,27 @@ namespace LoqNative
         {
             if (sender is not System.Windows.Controls.Button btn) return;
             try {
-                LoqGpuMode selectedMode = LoqGpuMode.Hybrid;
+                LoqGpuMode selectedMode = LoqGpuMode.Standard;
                 if (btn == BtnHybrid) {
-                    selectedMode = LoqGpuMode.Hybrid;
+                    selectedMode = LoqGpuMode.Standard;
                     GpuPnpManager.SetDgpuState(true); 
                 }
                 else if (btn == BtnIgpu) {
-                    selectedMode = LoqGpuMode.IGPUOnly;
+                    selectedMode = LoqGpuMode.Eco;
                     GpuPnpManager.SetDgpuState(false); 
                 }
                 else if (btn == BtnAutoGpu) {
-                    selectedMode = LoqGpuMode.Auto;
+                    selectedMode = LoqGpuMode.Optimized;
                 }
                 else if (btn == BtnDgpu) {
-                    selectedMode = LoqGpuMode.DGPU;
+                    selectedMode = LoqGpuMode.Ultimate;
                     GpuPnpManager.SetDgpuState(true);
                 }
 
                 WmiEngine.SetGpuMode(selectedMode);
                 HighlightActiveGpuButton(selectedMode);
 
-                if (selectedMode == LoqGpuMode.DGPU || WmiEngine.GetCurrentGpuMode() == LoqGpuMode.DGPU) {
+                if (selectedMode == LoqGpuMode.Ultimate || WmiEngine.GetCurrentGpuMode() == LoqGpuMode.Ultimate) {
                     System.Windows.MessageBox.Show("Display layout changes require a system reboot to alter physical MUX routing.", "Hardware Switch Notice", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             } catch (Exception ex) {
@@ -313,12 +313,11 @@ namespace LoqNative
         private void HighlightActiveGpuButton(LoqGpuMode activeMode)
         {
             ResetButtonRowStyle(BtnHybrid, BtnIgpu, BtnAutoGpu, BtnDgpu);
-            if (activeMode == LoqGpuMode.Hybrid) ApplyActiveStyle(BtnHybrid);
-            else if (activeMode == LoqGpuMode.IGPUOnly) ApplyActiveStyle(BtnIgpu);
-            else if (activeMode == LoqGpuMode.Auto) ApplyActiveStyle(BtnAutoGpu);
-            else if (activeMode == LoqGpuMode.DGPU) ApplyActiveStyle(BtnDgpu);
+            if (activeMode == LoqGpuMode.Standard) ApplyActiveStyle(BtnHybrid);
+            else if (activeMode == LoqGpuMode.Eco) ApplyActiveStyle(BtnIgpu);
+            else if (activeMode == LoqGpuMode.Optimized) ApplyActiveStyle(BtnAutoGpu);
+            else if (activeMode == LoqGpuMode.Ultimate) ApplyActiveStyle(BtnDgpu);
         }
-
         private void BatterySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (_isInitializing) return;
@@ -445,14 +444,14 @@ namespace LoqNative
                     } catch {
                         _trackedGamePid = 0;
                         WmiEngine.SetGpuMode(_targetGpuMode);
-                        if (_targetGpuMode == LoqGpuMode.IGPUOnly) 
+                        if (_targetGpuMode == LoqGpuMode.Eco)
                         {
                             OsTelemetry.KillGpuApps();
                             GpuPnpManager.SetDgpuState(false);
                         }
                     }
                 }
-                else if (_targetGpuMode == LoqGpuMode.IGPUOnly)
+                else if (_targetGpuMode == LoqGpuMode.Eco)
                 {
                     var fpsData = EtwFpsMonitor.GetRawData();
                     if (fpsData.Fps > 30 && fpsData.Pid > 0) 
@@ -464,7 +463,7 @@ namespace LoqNative
                             if (pName != "dwm" && pName != "explorer" && pName != "chrome" && pName != "msedge" && pName != "discord") 
                             {
                                 _trackedGamePid = fpsData.Pid; 
-                                WmiEngine.SetGpuMode(LoqGpuMode.Hybrid);
+                                WmiEngine.SetGpuMode(LoqGpuMode.Standard);
                                 GpuPnpManager.SetDgpuState(true);
                                 await Task.Delay(1000);
                             }
