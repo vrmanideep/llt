@@ -1,7 +1,7 @@
 <Window x:Class="LoqNative.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="LOQ Native Tuning" Height="450" Width="380"
+        Title="LOQ Native Tuning" Height="450" Width="420"
         WindowStyle="None" AllowsTransparency="True" Background="Transparent"
         WindowStartupLocation="Manual" 
         Topmost="True" ShowInTaskbar="False">
@@ -106,7 +106,7 @@
                         <ColumnDefinition Width="1" /> 
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="1" /> 
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="1.5*"/>
                     </Grid.ColumnDefinitions>
                     
                     <StackPanel Grid.Column="0" HorizontalAlignment="Center">
@@ -126,12 +126,32 @@
 
                     <Border Grid.Column="3" Background="#2C2C2E" VerticalAlignment="Stretch" Margin="0,2"/>
 
-                    <StackPanel Grid.Column="4" HorizontalAlignment="Center">
-                        <TextBlock Text="GPU" Foreground="#666666" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,6"/>
-                        <TextBlock x:Name="GpuData1" Text="--°C" Foreground="#E5E5EA" FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                        <TextBlock x:Name="GpuData2" Text="-- RPM" Foreground="#8E8E93" FontSize="11" HorizontalAlignment="Center" Margin="0,2,0,0"/>
-                        <TextBlock x:Name="GpuData3" Text="--%" Foreground="#8E8E93" FontSize="11" HorizontalAlignment="Center" Margin="0,2,0,0"/>
-                    </StackPanel>
+                    <!-- Dynamic Dual-GPU Grid -->
+                    <Grid Grid.Column="4" x:Name="GpuContainer" HorizontalAlignment="Center" MinWidth="60">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" x:Name="IgpuColumn"/>
+                            <ColumnDefinition Width="Auto" x:Name="GpuSplitterColumn"/>
+                            <ColumnDefinition Width="*" x:Name="DgpuColumn"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- AMD iGPU Stats -->
+                        <StackPanel Grid.Column="0" x:Name="IgpuPanel" HorizontalAlignment="Center">
+                            <TextBlock Text="iGPU" Foreground="#666666" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                            <TextBlock x:Name="IgpuData1" Text="--°C" Foreground="#E5E5EA" FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="IgpuData2" Text="-- RPM" Foreground="#8E8E93" FontSize="11" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                            <TextBlock x:Name="IgpuData3" Text="0%" Foreground="#8E8E93" FontSize="11" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                        </StackPanel>
+
+                        <Border Grid.Column="1" x:Name="GpuSplitter" Width="1" Background="#2C2C2E" Margin="6,2" Visibility="Collapsed"/>
+
+                        <!-- NVIDIA dGPU Stats -->
+                        <StackPanel Grid.Column="2" x:Name="DgpuPanel" HorizontalAlignment="Center">
+                            <TextBlock Text="dGPU" Foreground="#76B900" FontSize="10" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                            <TextBlock x:Name="DgpuData1" Text="--°C" Foreground="#E5E5EA" FontSize="13" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="DgpuData2" Text="-- RPM" Foreground="#8E8E93" FontSize="11" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                            <TextBlock x:Name="DgpuData3" Text="0% | 0 W" Foreground="#8E8E93" FontSize="11" HorizontalAlignment="Center" Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </Grid>
                 </Grid>
             </Border>
             

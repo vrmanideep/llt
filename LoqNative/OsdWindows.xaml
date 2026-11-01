@@ -4,6 +4,7 @@
         Title="LoqOSD" Height="50" Width="380"
         WindowStyle="None" AllowsTransparency="True" Background="#D8000000"
         Topmost="True" ShowInTaskbar="False" ResizeMode="NoResize"
+        ShowActivated="False"
         Left="20" Top="20" Foreground="White" FontFamily="Consolas">
     
     <Grid Margin="15,5">

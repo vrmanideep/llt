@@ -2,6 +2,7 @@ using System;
 using System.Management;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
+using System.Linq;
 
 namespace LoqNative.Core
 {
@@ -215,6 +216,8 @@ namespace LoqNative.Core
 
     public static class OsTelemetry
     {
+        private static System.Diagnostics.PerformanceCounter? _amdGpuCounter;
+
         public static uint GetCpuUsage()
         {
             try {
@@ -224,13 +227,46 @@ namespace LoqNative.Core
             } catch { } return 0;
         }
 
-        public static uint GetCpuClock()
+        private static System.Diagnostics.PerformanceCounter? _cpuPerfCounter;
+        private static uint _baseCpuClock = 0;
+
+        public static uint GetLiveCpuClockMhz()
         {
             try {
-                using var searcher = new ManagementObjectSearcher("select CurrentClockSpeed from Win32_Processor");
-                using var results = searcher.Get();
-                foreach (var obj in results) { using(obj) return Convert.ToUInt32(obj["CurrentClockSpeed"]); }
-            } catch { } return 0;
+                // Fetch the physical Base Clock from the Registry once
+                if (_baseCpuClock == 0) {
+                    using var key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"HARDWARE\DESCRIPTION\System\CentralProcessor\0");
+                    if (key != null) _baseCpuClock = (uint)(int)key.GetValue("~MHz", 3300);
+                }
+                
+                // Read the live boost percentage
+                if (_cpuPerfCounter == null) 
+                    _cpuPerfCounter = new System.Diagnostics.PerformanceCounter("Processor Information", "% Processor Performance", "_Total");
+                
+                float perfPct = _cpuPerfCounter.NextValue();
+                
+                // Calculate live frequency (e.g., 120% of 3300 MHz = 3960 MHz)
+                if (perfPct > 0) return (uint)((perfPct / 100.0) * _baseCpuClock);
+                
+                return _baseCpuClock;
+            } 
+            catch { return 3300; } 
+        }
+
+        public static uint GetAmdIgpuUsage()
+        {
+            try {
+                if (_amdGpuCounter == null) {
+                    var category = new System.Diagnostics.PerformanceCounterCategory("GPU Engine");
+                    string? amdInstance = category.GetInstanceNames().FirstOrDefault(n => n.Contains("AMD") && n.Contains("engtype_3D"));
+                    if (amdInstance != null) {
+                        _amdGpuCounter = new System.Diagnostics.PerformanceCounter("GPU Engine", "Utilization Percentage", amdInstance);
+                    }
+                }
+                
+                if (_amdGpuCounter != null) return (uint)_amdGpuCounter.NextValue();
+            } 
+            catch { } return 0;
         }
 
         public static (double UsedGB, double TotalGB) GetRamDetails()
@@ -248,17 +284,14 @@ namespace LoqNative.Core
             } catch { } return (0, 0);
         }
 
-        // --- BULLETPROOF NVML POLLER ---
-        public static (uint Usage, double Wattage, double VramGB, uint CoreMhz, uint MemMhz) GetNvidiaGpuStats(uint currentGpuTemp)
+        public static (uint Usage, double Wattage, double VramGB, uint CoreMhz, uint MemMhz, uint Temp) GetNvidiaGpuStats()
         {
-            if (currentGpuTemp == 0) return (0, 0, 0, 0, 0);
-
             try {
-                if (NvmlNative.nvmlInit_v2() != 0) return (0, 0, 0, 0, 0);
+                if (NvmlNative.nvmlInit_v2() != 0) return (0, 0, 0, 0, 0, 0);
                 try {
-                    if (NvmlNative.nvmlDeviceGetHandleByIndex_v2(0, out IntPtr device) != 0) return (0, 0, 0, 0, 0);
+                    if (NvmlNative.nvmlDeviceGetHandleByIndex_v2(0, out IntPtr device) != 0) return (0, 0, 0, 0, 0, 0);
 
-                    uint usage = 0, coreMhz = 0, memMhz = 0;
+                    uint usage = 0, coreMhz = 0, memMhz = 0, temp = 0;
                     double wattage = 0, vramGB = 0;
 
                     try { if (NvmlNative.nvmlDeviceGetUtilizationRates(device, out var util) == 0) usage = util.gpu; } catch {}
@@ -266,14 +299,15 @@ namespace LoqNative.Core
                     try { if (NvmlNative.nvmlDeviceGetMemoryInfo(device, out var mem) == 0) vramGB = mem.used / 1073741824.0; } catch {}
                     try { NvmlNative.nvmlDeviceGetClockInfo(device, 0, out coreMhz); } catch {}
                     try { NvmlNative.nvmlDeviceGetClockInfo(device, 2, out memMhz); } catch {}
+                    try { NvmlNative.nvmlDeviceGetTemperature(device, 0, out temp); } catch {} // 0 = GPU Die Sensor
 
-                    return (usage, wattage, vramGB, coreMhz, memMhz);
+                    return (usage, wattage, vramGB, coreMhz, memMhz, temp);
                 } 
                 finally {
                     NvmlNative.nvmlShutdown();
                 }
             } catch { }
-            return (0, 0, 0, 0, 0);
+            return (0, 0, 0, 0, 0, 0);
         }
 
         public static (double Percent, double Wattage, bool IsCharging) GetBatteryInfo()
@@ -299,7 +333,6 @@ namespace LoqNative.Core
             return (percent, wattage, isCharging);
         }
 
-        // --- FORCE GPU DEEP SLEEP ENGINE ---
         public static void KillGpuApps()
         {
             try
@@ -354,7 +387,6 @@ namespace LoqNative.Core
         }
     }
 
-    // --- UPGRADED KERNEL FPS ENGINE (Filtered 1% Lows) ---
     public static class EtwFpsMonitor
     {
         private static Microsoft.Diagnostics.Tracing.Session.TraceEventSession? _session;
@@ -448,13 +480,15 @@ namespace LoqNative.Core
             _timer?.Stop();
         }
 
+        public static (int Fps, int Pid) GetRawData() => (_currentFps, _activeProcessId);
+
         public static (string Avg, string Low) GetFps() => 
             (_currentFps > 0 ? _currentFps.ToString() : "--", _currentFps > 0 ? _current1PercentLow.ToString() : "--");
     }
 
     public static class NvmlNative
     {
-        private const string NvmlLib = @"C:\Program Files\NVIDIA Corporation\NVSMI\nvml.dll";
+        private const string NvmlLib = "nvml.dll";
 
         [DllImport(NvmlLib, CallingConvention = CallingConvention.Cdecl)]
         public static extern int nvmlInit_v2();
@@ -497,5 +531,8 @@ namespace LoqNative.Core
 
         [DllImport(NvmlLib, CallingConvention = CallingConvention.Cdecl)]
         public static extern int nvmlDeviceGetGraphicsRunningProcesses(IntPtr device, ref uint infoCount, [Out] nvmlProcessInfo_t[]? infos);
+
+        [DllImport(NvmlLib, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int nvmlDeviceGetTemperature(IntPtr device, int sensorType, out uint temp);
     }
 }

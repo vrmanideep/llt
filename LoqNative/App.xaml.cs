@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Principal;
 using System.Threading;
 using System.Windows;
+using LoqNative.Core;
 
 namespace LoqNative
 {
@@ -42,7 +43,11 @@ namespace LoqNative
                 return;
             }
 
-            // 3. Intercept the launch to handle the Silent Boot flag
+            // 3. Silently create/update the Start Menu shortcut and Windows Boot Registry
+            StartupManager.EnsureStartMenuShortcut();
+            StartupManager.Enable();
+
+            // 4. Intercept the launch to handle the Silent Boot flag
             MainWindow = new MainWindow();
             
             if (!e.Args.Contains("--silent"))
