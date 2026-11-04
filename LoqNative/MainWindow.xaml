@@ -190,6 +190,19 @@
                         </ControlTemplate>
                     </Button.Template>
                 </Button>
+
+                <Button x:Name="BtnMaxFan" Content="🔍 Read Fan Tables (Diagnostic)" 
+                        Margin="0,8,0,0" Padding="0,6" Background="#2C2C2E" Foreground="#0A84FF" 
+                        FontSize="11" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand" 
+                        Click="BtnMaxFan_Click">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" CornerRadius="5">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
             </StackPanel>
 
             <StackPanel Grid.Row="4" Margin="2,0,2,0">

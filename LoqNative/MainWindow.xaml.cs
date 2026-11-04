@@ -53,8 +53,8 @@ namespace LoqNative
         private const int HOTKEY_REPORT_ID = 9004;
 
         private bool? _wasCharging = null;
-        private int _trackedGamePid = 0; 
         private LoqGpuMode _targetGpuMode = LoqGpuMode.Standard;
+        private bool _isDgpuEnabled = false;
         private object? _lastStats;
 
         private DispatcherTimer? _telemetryTimer;
@@ -77,6 +77,8 @@ namespace LoqNative
         public MainWindow()
         {
             InitializeComponent();
+            // Listen for Windows shutdown to prevent boot delays
+            SystemEvents.SessionEnding += SystemEvents_SessionEnding;
             
             var desktopWorkingArea = SystemParameters.WorkArea;
             this.Left = desktopWorkingArea.Right - this.Width - 12;
@@ -99,11 +101,32 @@ namespace LoqNative
 
             StartTelemetryEngine();
             EtwFpsMonitor.Start();
-
-           
         }
 
-        
+        //private bool _isMaxFanOn = false;
+        private void BtnMaxFan_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string reportPath =
+                    LoqNative.Diagnostics.Telemetry
+                        .Wmi3TelemetryDiagnostic.Run();
+
+                System.Windows.MessageBox.Show(
+                    $"WMI3 diagnostic completed.\n\nReport:\n{reportPath}",
+                    "LoqNative - Telemetry",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(
+                    ex.ToString(),
+                    "Telemetry diagnostic failed",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
 
         protected override void OnSourceInitialized(EventArgs e)
         {
@@ -142,6 +165,8 @@ namespace LoqNative
             this.BeginAnimation(Window.OpacityProperty, fadeAnim);
         }
 
+        private const int WM_QUERYENDSESSION = 0x0011;
+
         private IntPtr HwndHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             const int WM_HOTKEY = 0x0312;
@@ -169,6 +194,16 @@ namespace LoqNative
                     LockWorkStation();
                     SendMessage(hwnd, WM_SYSCOMMAND, (IntPtr)SC_MONITORPOWER, (IntPtr)MONITOR_TURN_OFF);
                 }
+            }
+            else if (msg == WM_QUERYENDSESSION)
+            {
+                // Block Windows shutdown synchronously until the dGPU is re-enabled
+                if (!_isDgpuEnabled)
+                {
+                    try { LoqNative.Core.GpuPnpManager.SetDgpuState(true); } catch { }
+                }
+                handled = true;
+                return (IntPtr)1; // Signal Windows it is now safe to shut down
             }
             return IntPtr.Zero;
         }
@@ -218,14 +253,19 @@ namespace LoqNative
 
         private void ReadInitialHardwareState()
         {
-            _isInitializing = true;
-            HighlightActiveThermalButton(WmiEngine.GetCurrentThermalMode());
-            HighlightActiveGpuButton(WmiEngine.GetCurrentGpuMode());
-            LoqBatteryMode currentBatteryMode = WmiEngine.GetBatteryMode();
-            BatterySlider.Value = (double)currentBatteryMode;
-            UpdateBatteryText(currentBatteryMode);
-            CbStartup.IsChecked = GetStartupState();
-            _isInitializing = false;
+            // Read the firmware-reported GPU mode independently.
+            _targetGpuMode = WmiEngine.GetCurrentGpuMode();
+
+            // Read NVIDIA's Windows PnP state separately.
+            // An enabled NVIDIA device does not mean the laptop is in Hybrid mode.
+            var gpuStatus = GpuPnpManager.GetDgpuStatus();
+
+            if (gpuStatus.Success && gpuStatus.IsEnabled.HasValue)
+            {
+                _isDgpuEnabled = gpuStatus.IsEnabled.Value;
+            }
+
+            HighlightActiveGpuButton(_targetGpuMode);
         }
 
         private void BtnClose_Click(object sender, RoutedEventArgs e) => this.Hide();
@@ -239,9 +279,11 @@ namespace LoqNative
                 else if (btn == BtnBalanced) selectedMode = LoqThermalMode.Balanced;
                 else if (btn == BtnPerformance) selectedMode = LoqThermalMode.Performance;
                 else if (btn == BtnCustom) selectedMode = LoqThermalMode.Custom;
-
-                WmiEngine.SetThermalMode(selectedMode);
+                
+                // Point to the modular PowerControl class
+                LoqNative.Hardware.PowerControl.SetThermalMode(selectedMode);
                 HighlightActiveThermalButton(selectedMode);
+                
             } catch (Exception ex) {
                 System.Windows.MessageBox.Show($"Mode change failed: {ex.Message}", "WMI Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
@@ -259,37 +301,79 @@ namespace LoqNative
             else if (activeMode == LoqThermalMode.Custom) { BtnCustom.Background = _ledPurple; BtnCustom.Foreground = _textActive; }
         }
 
-        private void BtnGpuMode_Click(object sender, RoutedEventArgs e)
+        
+        private async void BtnGpuMode_Click(object sender, RoutedEventArgs e)
         {
             if (sender is not System.Windows.Controls.Button btn) return;
-            try {
+            btn.IsEnabled = false;
+
+            try
+            {
                 LoqGpuMode selectedMode = LoqGpuMode.Standard;
-                if (btn == BtnHybrid) {
+                bool runDriverBounce = false;
+
+                if (btn == BtnHybrid)
+                {
                     selectedMode = LoqGpuMode.Standard;
-                    GpuPnpManager.SetDgpuState(true); 
+                    await Task.Run(() => {
+                        LoqNative.Core.GpuPnpManager.SetDgpuState(true);
+                        LoqNative.Core.WmiEngine.SetGpuMode(selectedMode);
+                    });
+                    runDriverBounce = true;
                 }
-                else if (btn == BtnIgpu) {
+                else if (btn == BtnIgpu)
+                {
                     selectedMode = LoqGpuMode.Eco;
-                    GpuPnpManager.SetDgpuState(false); 
+                    await Task.Run(() => {
+                        // 1. Kill rogue apps, 2. Disable device, 3. Set WMI
+                        LoqNative.Core.OsTelemetry.KillGpuApps();
+                        System.Threading.Thread.Sleep(800);
+                        LoqNative.Core.GpuPnpManager.SetDgpuState(false);
+                        LoqNative.Core.WmiEngine.SetGpuMode(selectedMode);
+                    });
+                    runDriverBounce = true;
                 }
-                else if (btn == BtnAutoGpu) {
+                else if (btn == BtnAutoGpu)
+                {
                     selectedMode = LoqGpuMode.Optimized;
+                    await Task.Run(() => LoqNative.Core.AutoGpuController.EnableNvidia());
                 }
-                else if (btn == BtnDgpu) {
+                else if (btn == BtnDgpu)
+                {
                     selectedMode = LoqGpuMode.Ultimate;
-                    GpuPnpManager.SetDgpuState(true);
+                    await Task.Run(() => {
+                        LoqNative.Core.GpuPnpManager.SetDgpuState(true);
+                        LoqNative.Core.WmiEngine.SetGpuMode(selectedMode);
+                    });
+                }
+                else { return; }
+
+                // Instantly bounce the graphics driver to re-hook the brightness slider
+                if (runDriverBounce)
+                {
+                    try {
+                        using var restartProc = new System.Diagnostics.Process();
+                        restartProc.StartInfo.FileName = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "restart64.exe");
+                        restartProc.StartInfo.UseShellExecute = true;
+                        restartProc.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+                        restartProc.Start();
+                    } catch { }
                 }
 
-                WmiEngine.SetGpuMode(selectedMode);
+                _targetGpuMode = selectedMode;
+                _isDgpuEnabled = (selectedMode != LoqGpuMode.Eco);
                 HighlightActiveGpuButton(selectedMode);
-
-                if (selectedMode == LoqGpuMode.Ultimate || WmiEngine.GetCurrentGpuMode() == LoqGpuMode.Ultimate) {
-                    System.Windows.MessageBox.Show("Display layout changes require a system reboot to alter physical MUX routing.", "Hardware Switch Notice", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-            } catch (Exception ex) {
-                System.Windows.MessageBox.Show($"GPU routing execution failed: {ex.Message}", "WMI Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"GPU routing failed: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            finally
+            {
+                btn.IsEnabled = true;
             }
         }
+
 
         private void BtnForceSleep_Click(object sender, RoutedEventArgs e)
         {
@@ -330,11 +414,13 @@ namespace LoqNative
             LoqBatteryMode targetMode = (LoqBatteryMode)targetValue;
             UpdateBatteryText(targetMode);
             try {
-                WmiEngine.SetBatteryMode(targetMode);
-            } catch (Exception ex) {
+                    // Point to the low-level EnergyDrv controller
+                    LoqNative.Core.WmiEngine.SetBatteryMode((LoqNative.Core.LoqBatteryMode)targetValue);
+                } catch (Exception ex) {
                 System.Windows.MessageBox.Show($"Driver command failed: {ex.Message}\n\nYou MUST run this application as Administrator.", "Permission Denied", MessageBoxButton.OK, MessageBoxImage.Error);
                 _isInitializing = true;
-                BatterySlider.Value = (double)WmiEngine.GetBatteryMode(); 
+                // Safely reset the slider if the command fails
+                BatterySlider.Value = 0; 
                 _isInitializing = false;
             }
         }
@@ -420,77 +506,74 @@ namespace LoqNative
             button.Foreground = _textActive;
         }
 
+        private void SystemEvents_SessionEnding(object sender, SessionEndingEventArgs e)
+        {
+            // Synchronously re-enable the NVIDIA device before the OS powers down
+            // This clears the disabled flag in the registry to prevent boot delays
+            if (!_isDgpuEnabled)
+            {
+                try
+                {
+                    LoqNative.Core.GpuPnpManager.SetDgpuState(true);
+                }
+                catch { }
+            }
+        }
+
+        
         private async Task UpdateDashboardAsync()
         {
-            var stats = await Task.Run(async () => 
+            var stats = await Task.Run(async () =>
             {
-                uint cpuTemp = WmiEngine.GetFeatureValue((uint)LoqTelemetryId.CpuTemperature);
+                bool cpuTempOk = WmiEngine.TryGetFeatureValue(
+                    (uint)LoqTelemetryId.CpuTemperature, out uint cpuTemp);
+
+                bool gpuTempOk = WmiEngine.TryGetFeatureValue(
+                    (uint)LoqTelemetryId.GpuTemperature, out uint gpuTemp);
+
+                bool cpuFanOk = WmiEngine.TryGetFeatureValue(
+                    (uint)LoqTelemetryId.CpuFanSpeed, out uint cpuFan);
+
+                bool gpuFanOk = WmiEngine.TryGetFeatureValue(
+                    (uint)LoqTelemetryId.GpuFanSpeed, out uint gpuFan);
+
                 var battery = OsTelemetry.GetBatteryInfo();
 
-                if (_wasCharging == null) {
+                if (_wasCharging == null)
+                {
                     _wasCharging = battery.IsCharging;
                 }
-                else if (battery.IsCharging != _wasCharging) {
+                else if (battery.IsCharging != _wasCharging)
+                {
                     _wasCharging = battery.IsCharging;
-                    // Optionally automate refresh rate here too
-                    // if (battery.IsCharging) DisplayEngine.SetRefreshRate(144); else DisplayEngine.SetRefreshRate(60);
                 }
 
-                if (_trackedGamePid > 0)
-                {
-                    try {
-                        var proc = System.Diagnostics.Process.GetProcessById(_trackedGamePid);
-                        if (proc.HasExited) throw new Exception(); 
-                    } catch {
-                        _trackedGamePid = 0;
-                        WmiEngine.SetGpuMode(_targetGpuMode);
-                        if (_targetGpuMode == LoqGpuMode.Eco)
-                        {
-                            OsTelemetry.KillGpuApps();
-                            GpuPnpManager.SetDgpuState(false);
-                        }
-                    }
-                }
-                else if (_targetGpuMode == LoqGpuMode.Eco)
-                {
-                    var fpsData = EtwFpsMonitor.GetRawData();
-                    if (fpsData.Fps > 30 && fpsData.Pid > 0) 
-                    {
-                        try {
-                            using var proc = System.Diagnostics.Process.GetProcessById(fpsData.Pid);
-                            string pName = proc.ProcessName.ToLower();
-                            
-                            if (pName != "dwm" && pName != "explorer" && pName != "chrome" && pName != "msedge" && pName != "discord") 
-                            {
-                                _trackedGamePid = fpsData.Pid; 
-                                WmiEngine.SetGpuMode(LoqGpuMode.Standard);
-                                GpuPnpManager.SetDgpuState(true);
-                                await Task.Delay(1000);
-                            }
-                        } catch { }
-                    }
-                }
+                
 
                 var nvGpu = OsTelemetry.GetNvidiaGpuStats();
-                uint gpuTemp = nvGpu.Temp; 
                 uint amdUsage = OsTelemetry.GetAmdIgpuUsage();
                 var ram = OsTelemetry.GetRamDetails();
 
-                return new 
+                return new
                 {
                     CpuTemp = cpuTemp,
-                    CpuUsage = OsTelemetry.GetCpuUsage(),
-                    CpuClock = OsTelemetry.GetLiveCpuClockMhz(), 
-                    CpuFan = WmiEngine.GetFeatureValue((uint)LoqTelemetryId.CpuFanSpeed),
-                    
+                    CpuTempOk = cpuTempOk,
+                    CpuFan = cpuFan,
+                    CpuFanOk = cpuFanOk,
+
                     IgpuUsage = amdUsage,
-                    IgpuTemp = cpuTemp, 
-                    
-                    DgpuTemp = gpuTemp, 
+                    IgpuTemp = cpuTemp,
+
+                    DgpuTemp = gpuTemp,
+                    DgpuTempOk = gpuTempOk,
                     DgpuUsage = nvGpu.Usage,
                     DgpuWattage = nvGpu.Wattage,
-                    GpuFan = WmiEngine.GetFeatureValue((uint)LoqTelemetryId.GpuFanSpeed),
-                    
+                    GpuFan = gpuFan,
+                    GpuFanOk = gpuFanOk,
+
+                    CpuUsage = OsTelemetry.GetCpuUsage(),
+                    CpuClock = OsTelemetry.GetLiveCpuClockMhz(),
+
                     Ram = ram,
                     Battery = battery,
                     LiveThermalMode = WmiEngine.GetCurrentThermalMode()
@@ -498,25 +581,40 @@ namespace LoqNative
             });
 
             _lastStats = stats;
-            double calcCpuW = (stats.CpuUsage / 100.0) * 45.0 + 5.0; 
+
+            double calcCpuW = (stats.CpuUsage / 100.0) * 45.0 + 5.0;
 
             double totalEstimatedWallPower = 0;
+
             if (stats.Battery.Wattage > 0)
             {
-                double baseSystemPower = 15.0; 
-                totalEstimatedWallPower = stats.Battery.IsCharging 
-                    ? stats.Battery.Wattage + baseSystemPower + calcCpuW + stats.DgpuWattage 
-                    : stats.Battery.Wattage; 
+                double baseSystemPower = 15.0;
+
+                totalEstimatedWallPower = stats.Battery.IsCharging
+                    ? stats.Battery.Wattage + baseSystemPower + calcCpuW + stats.DgpuWattage
+                    : stats.Battery.Wattage;
             }
 
-            if (_osdWindow.IsVisible) {
+            if (_osdWindow.IsVisible)
+            {
                 var fpsData = EtwFpsMonitor.GetFps();
-                _osdWindow.UpdateStats(fpsData.Avg, fpsData.Low, stats.CpuTemp, stats.DgpuTemp, stats.CpuFan, stats.GpuFan, stats.CpuUsage, stats.DgpuUsage, stats.DgpuWattage, calcCpuW); 
+
+                _osdWindow.UpdateStats(
+                    fpsData.Avg,
+                    fpsData.Low,
+                    stats.CpuTemp,
+                    stats.DgpuTemp,
+                    stats.CpuFan,
+                    stats.GpuFan,
+                    stats.CpuUsage,
+                    stats.DgpuUsage,
+                    stats.DgpuWattage,
+                    calcCpuW);
             }
 
-            if (!this.IsVisible) return; 
+            if (!this.IsVisible) return;
 
-            bool isDgpuAwake = stats.DgpuWattage > 1 || stats.DgpuTemp > 0;
+            bool isDgpuAwake = _isDgpuEnabled;
             bool isIgpuAwake = true;
 
             if (isDgpuAwake && isIgpuAwake)
@@ -524,6 +622,7 @@ namespace LoqNative
                 IgpuColumn.Width = new GridLength(1, GridUnitType.Star);
                 DgpuColumn.Width = new GridLength(1, GridUnitType.Star);
                 GpuSplitterColumn.Width = GridLength.Auto;
+
                 IgpuPanel.Visibility = Visibility.Visible;
                 DgpuPanel.Visibility = Visibility.Visible;
                 GpuSplitter.Visibility = Visibility.Visible;
@@ -533,6 +632,7 @@ namespace LoqNative
                 IgpuColumn.Width = new GridLength(0);
                 DgpuColumn.Width = new GridLength(1, GridUnitType.Star);
                 GpuSplitterColumn.Width = new GridLength(0);
+
                 IgpuPanel.Visibility = Visibility.Collapsed;
                 DgpuPanel.Visibility = Visibility.Visible;
                 GpuSplitter.Visibility = Visibility.Collapsed;
@@ -542,34 +642,64 @@ namespace LoqNative
                 IgpuColumn.Width = new GridLength(1, GridUnitType.Star);
                 DgpuColumn.Width = new GridLength(0);
                 GpuSplitterColumn.Width = new GridLength(0);
+
                 IgpuPanel.Visibility = Visibility.Visible;
                 DgpuPanel.Visibility = Visibility.Collapsed;
                 GpuSplitter.Visibility = Visibility.Collapsed;
             }
 
-            IgpuData1.Text = stats.IgpuTemp > 0 ? $"{stats.IgpuTemp}°C" : "--°C";
-            IgpuData2.Text = stats.CpuFan > 0 ? $"{stats.CpuFan} RPM" : "-- RPM"; 
+            IgpuData1.Text = stats.CpuTempOk
+                ? $"{stats.IgpuTemp}°C"
+                : "--°C";
+
+            IgpuData2.Text = stats.CpuFanOk
+                ? $"{stats.CpuFan} RPM"
+                : "-- RPM";
+
             IgpuData3.Text = $"{stats.IgpuUsage}%";
 
-            DgpuData1.Text = stats.DgpuTemp > 0 ? $"{stats.DgpuTemp}°C" : "--°C";
-            DgpuData2.Text = stats.GpuFan > 0 ? $"{stats.GpuFan} RPM" : "0 RPM";
-            DgpuData3.Text = $"{stats.DgpuUsage}% | {stats.DgpuWattage:0.0} W";
+            DgpuData1.Text = stats.DgpuTempOk
+                ? $"{stats.DgpuTemp}°C"
+                : "--°C";
 
-            CpuData1.Text = stats.CpuTemp > 0 ? $"{stats.CpuTemp}°C" : "--°C";
-            CpuData2.Text = stats.CpuFan > 0 ? $"{stats.CpuFan} RPM" : "0 RPM";
-            CpuData3.Text = $"{stats.CpuUsage}% | {(stats.CpuClock / 1000.0):0.00} GHz";
+            DgpuData2.Text = stats.GpuFanOk
+                ? $"{stats.GpuFan} RPM"
+                : "-- RPM";
 
-            RamData1.Text = $"{stats.Ram.UsedGB:0.0} / {stats.Ram.TotalGB:0.0}";
+            DgpuData3.Text =
+                $"{stats.DgpuUsage}% | {stats.DgpuWattage:0.0} W";
 
-            string battStatus = stats.Battery.IsCharging ? "Charging" : "Discharging";
-            BatteryWattage.Text = totalEstimatedWallPower > 0 ? $"Power: {totalEstimatedWallPower:0.0} W" : $"{battStatus}: -- W";
-            BatteryPercent.Text = $"Charge: {stats.Battery.Percent:0.0}%";
+            CpuData1.Text = stats.CpuTempOk
+                ? $"{stats.CpuTemp}°C"
+                : "--°C";
+
+            CpuData2.Text = stats.CpuFanOk
+                ? $"{stats.CpuFan} RPM"
+                : "-- RPM";
+
+            CpuData3.Text =
+                $"{stats.CpuUsage}% | {(stats.CpuClock / 1000.0):0.00} GHz";
+
+            RamData1.Text =
+                $"{stats.Ram.UsedGB:0.0} / {stats.Ram.TotalGB:0.0}";
+
+            string battStatus =
+                stats.Battery.IsCharging ? "Charging" : "Discharging";
+
+            BatteryWattage.Text = totalEstimatedWallPower > 0
+                ? $"Power: {totalEstimatedWallPower:0.0} W"
+                : $"{battStatus}: -- W";
+
+            BatteryPercent.Text =
+                $"Charge: {stats.Battery.Percent:0.0}%";
 
             HighlightActiveThermalButton(stats.LiveThermalMode);
         }
 
+
         protected override void OnClosed(EventArgs e)
         {
+            SystemEvents.SessionEnding -= SystemEvents_SessionEnding; // Remove hook
             var hwnd = new WindowInteropHelper(this).Handle;
             UnregisterHotKey(hwnd, HOTKEY_ID);
             UnregisterHotKey(hwnd, HOTKEY_REPORT_ID);
@@ -589,6 +719,19 @@ namespace LoqNative
             {
                 base.OnClosing(e);
             }
+        }
+
+        private void TestDgpuDetection()
+        {
+            var result = GpuPnpManager.GetDgpuStatus();
+
+            System.Windows.MessageBox.Show(
+                $"Success: {result.Success}\n" +
+                $"Enabled: {result.IsEnabled}\n" +
+                $"Device ID: {result.DeviceId}\n" +
+                $"Message: {result.Message}",
+                "dGPU Detection"
+            );
         }
     }
 }

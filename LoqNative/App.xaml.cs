@@ -47,10 +47,7 @@ namespace LoqNative
             StartupManager.EnsureStartMenuShortcut();
             StartupManager.Enable();
 
-            // 4. Start the Automated GPU Process Watcher
-            AutoGpuSwitcher.StartWatching();
-
-            // 5. Intercept the launch to handle the Silent Boot flag
+            // 4. Intercept the launch to handle the Silent Boot flag
             MainWindow = new MainWindow();
         }
 

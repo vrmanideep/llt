@@ -79,48 +79,129 @@ namespace LoqNative.Core
 
         public static void SetGpuMode(LoqGpuMode mode)
         {
+            uint igpuValue = mode switch
+            {
+                LoqGpuMode.Eco => 1,
+                LoqGpuMode.Optimized => 2,
+                _ => 0
+            };
+
             int gSyncValue = mode == LoqGpuMode.Ultimate ? 1 : 0;
-            uint igpuValue = mode switch { LoqGpuMode.Eco => 1, LoqGpuMode.Optimized => 2, _ => 0 };
-            try {
-                using var searcher = new ManagementObjectSearcher(@"root\WMI", "SELECT * FROM LENOVO_GAMEZONE_DATA");
+
+            bool gSyncSet = false;
+            bool igpuSet = false;
+            Exception? gSyncError = null;
+            Exception? igpuError = null;
+
+            // Set G-Sync / dGPU routing mode.
+            try
+            {
+                using var searcher = new ManagementObjectSearcher(
+                    @"root\WMI",
+                    "SELECT * FROM LENOVO_GAMEZONE_DATA");
+
                 using var results = searcher.Get();
-                foreach (ManagementObject obj in results) {
-                    using (obj) {
-                        using ManagementBaseObject inParams = obj.GetMethodParameters("SetGSyncStatus");
+
+                foreach (ManagementObject obj in results)
+                {
+                    using (obj)
+                    {
+                        using ManagementBaseObject inParams =
+                            obj.GetMethodParameters("SetGSyncStatus");
+
                         inParams["Data"] = gSyncValue;
+
                         obj.InvokeMethod("SetGSyncStatus", inParams, null);
+                        gSyncSet = true;
                     }
                 }
-            } catch { }
+            }
+            catch (Exception ex)
+            {
+                gSyncError = ex;
+            }
 
-            bool igpuSet = false;
-            try {
-                using var searcher = new ManagementObjectSearcher(@"root\WMI", "SELECT * FROM LENOVO_GAMEZONE_DATA");
+            // Set iGPU mode.
+            try
+            {
+                using var searcher = new ManagementObjectSearcher(
+                    @"root\WMI",
+                    "SELECT * FROM LENOVO_GAMEZONE_DATA");
+
                 using var results = searcher.Get();
-                foreach (ManagementObject obj in results) {
-                    using (obj) {
-                        using ManagementBaseObject inParams = obj.GetMethodParameters("SetIGPUModeStatus");
-                        inParams["Data"] = (int)igpuValue;
-                        obj.InvokeMethod("SetIGPUModeStatus", inParams, null);
+
+                foreach (ManagementObject obj in results)
+                {
+                    using (obj)
+                    {
+                        using ManagementBaseObject inParams =
+                            obj.GetMethodParameters("SetIGPUModeStatus");
+
+                        inParams["mode"] = igpuValue;
+
+                        using ManagementBaseObject? outParams =
+                            obj.InvokeMethod("SetIGPUModeStatus", inParams, null);
+
+                        if (outParams?["Data"] != null)
+                        {
+                            uint returnCode = Convert.ToUInt32(outParams["Data"]);
+
+                            System.Diagnostics.Debug.WriteLine(
+                                $"SetIGPUModeStatus returned: {returnCode}");
+                        }
+
                         igpuSet = true;
                     }
                 }
-            } catch { }
+            }
+            catch (Exception ex)
+            {
+                igpuError = ex;
+            }
 
-            if (!igpuSet) {
-                try {
-                    using var searcher = new ManagementObjectSearcher(@"root\WMI", "SELECT * FROM LENOVO_OTHER_METHOD");
+            // Fallback only if the primary iGPU method could not be invoked.
+            if (!igpuSet)
+            {
+                try
+                {
+                    using var searcher = new ManagementObjectSearcher(
+                        @"root\WMI",
+                        "SELECT * FROM LENOVO_OTHER_METHOD");
+
                     using var results = searcher.Get();
-                    foreach (ManagementObject obj in results) {
-                        using (obj) {
-                            using ManagementBaseObject inParams = obj.GetMethodParameters("SetFeatureValue");
-                            inParams["IDs"] = (uint)0x00010000; 
+
+                    foreach (ManagementObject obj in results)
+                    {
+                        using (obj)
+                        {
+                            using ManagementBaseObject inParams =
+                                obj.GetMethodParameters("SetFeatureValue");
+
+                            inParams["IDs"] = (uint)0x00010000;
                             inParams["value"] = igpuValue;
+
                             obj.InvokeMethod("SetFeatureValue", inParams, null);
+                            igpuSet = true;
                         }
                     }
-                } catch (Exception ex) { throw new Exception("GPU routing failed. Error: " + ex.Message); }
+                }
+                catch (Exception ex)
+                {
+                    igpuError = ex;
+                }
             }
+
+            if (!igpuSet)
+            {
+                throw new Exception(
+                    $"Failed to set GPU mode to {mode}. " +
+                    $"iGPU method error: {igpuError?.Message ?? "Method unavailable"}. " +
+                    $"G-Sync method error: {gSyncError?.Message ?? "None"}.");
+            }
+
+            System.Diagnostics.Debug.WriteLine(
+                $"GPU mode request: {mode}, iGPU value: {igpuValue}, " +
+                $"G-Sync request invoked: {gSyncSet}");
         }
 
         private const uint IOCTL_BATTERY_CHARGE_MODE = 0x831020F8;
@@ -195,22 +276,55 @@ namespace LoqNative.Core
             } catch { }
         }
         
-        public static uint GetFeatureValue(uint id)
+        public static bool TryGetFeatureValue(uint id, out uint value)
         {
-            try {
-                using var searcher = new ManagementObjectSearcher(@"root\WMI", "SELECT * FROM LENOVO_OTHER_METHOD");
+            value = 0;
+
+            try
+            {
+                using var searcher = new ManagementObjectSearcher(
+                    @"root\WMI",
+                    "SELECT * FROM LENOVO_OTHER_METHOD");
+
                 using var results = searcher.Get();
-                foreach (ManagementObject obj in results) {
-                    using (obj) {
-                        using ManagementBaseObject inParams = obj.GetMethodParameters("GetFeatureValue");
+
+                foreach (ManagementObject obj in results)
+                {
+                    using (obj)
+                    {
+                        using ManagementBaseObject inParams =
+                            obj.GetMethodParameters("GetFeatureValue");
+
                         inParams["IDs"] = id;
-                        using ManagementBaseObject outParams = obj.InvokeMethod("GetFeatureValue", inParams, null);
-                        return Convert.ToUInt32(outParams["Value"]);
+
+                        using ManagementBaseObject outParams =
+                            obj.InvokeMethod("GetFeatureValue", inParams, null);
+
+                        object? result = outParams?["value"];
+
+                        if (result == null)
+                            return false;
+
+                        value = Convert.ToUInt32(result);
+                        return true;
                     }
                 }
-            } catch { }
-            return 0;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(
+                    $"WMI3 GetFeatureValue failed for 0x{id:X8}: {ex}");
+            }
+
+            return false;
         }
+
+        public static uint GetFeatureValue(uint id)
+        {
+            return TryGetFeatureValue(id, out uint value) ? value : 0;
+        }
+
+
     }
 
     public static class OsTelemetry
@@ -390,7 +504,7 @@ namespace LoqNative.Core
     {
         private static Microsoft.Diagnostics.Tracing.Session.TraceEventSession? _session;
         private static System.Collections.Concurrent.ConcurrentDictionary<int, int> _frameCount = new();
-        private static System.Collections.Concurrent.ConcurrentBag<double> _frameTimes = new();
+        private static List<double> _frameTimes = new List<double>();
         private static System.Collections.Concurrent.ConcurrentDictionary<int, long> _lastFrameTimestamp = new();
         
         private static int _currentFps = 0;
@@ -411,61 +525,67 @@ namespace LoqNative.Core
 
                     _session = new Microsoft.Diagnostics.Tracing.Session.TraceEventSession(sessionName);
                     var dxgkrnl = Guid.Parse("802ec45a-1e99-4b83-9920-87c98277ba9d");
-                    _session.EnableProvider(dxgkrnl, Microsoft.Diagnostics.Tracing.TraceEventLevel.Informational, 0x1); 
+                    _session.EnableProvider(dxgkrnl, Microsoft.Diagnostics.Tracing.TraceEventLevel.Informational, 0x08000000); 
+
+                    long lastEventArrivalTicks = 0; 
 
                     _session.Source.Dynamic.All += (data) =>
                     {
-                        if (data.EventName.Contains("Present")) 
+                        if ((int)data.ID == 184) 
                         {
                             int pid = data.ProcessID;
-                            _frameCount.AddOrUpdate(pid, 1, (id, count) => count + 1);
+                            _activeProcessId = pid; 
 
-                            if (pid == _activeProcessId) 
-                            {
-                                long now = System.Diagnostics.Stopwatch.GetTimestamp();
-                                if (_lastFrameTimestamp.TryGetValue(pid, out long last)) {
-                                    double ms = (now - last) * 1000.0 / System.Diagnostics.Stopwatch.Frequency;
-                                    if (ms > 0) _frameTimes.Add(ms);
+                            // 1. Used solely to detect if the game is still running
+                            lastEventArrivalTicks = System.Diagnostics.Stopwatch.GetTimestamp();
+                            
+                            // 2. CRITICAL FIX: Use the actual Kernel timestamp, NOT the callback arrival time
+                            long kernelTicks = data.TimeStamp.Ticks;
+
+                            if (_lastFrameTimestamp.TryGetValue(pid, out long last)) {
+                                double ms = (kernelTicks - last) / (double)TimeSpan.TicksPerMillisecond;
+                                
+                                if (ms > 0 && ms < 500) {
+                                    lock (_frameTimes) {
+                                        _frameTimes.Add(ms);
+                                        if (_frameTimes.Count > 300) _frameTimes.RemoveAt(0); 
+                                    }
                                 }
-                                _lastFrameTimestamp[pid] = now;
                             }
+                            _lastFrameTimestamp[pid] = kernelTicks;
                         }
                     };
 
                     _timer = new System.Timers.Timer(1000);
                     _timer.Elapsed += (s, e) =>
                     {
-                        int maxFps = 0, maxPid = 0;
-                        foreach (var kvp in _frameCount) {
-                            if (kvp.Value > maxFps) { maxFps = kvp.Value; maxPid = kvp.Key; }
-                        }
-                        
-                        _currentFps = maxFps;
-                        _activeProcessId = maxPid;
-
-                        var times = _frameTimes.ToArray();
-                        _frameTimes.Clear();
-                        
-                        if (times.Length > 0 && maxFps > 0) {
-                            var fpsList = System.Linq.Enumerable.ToArray(
-                                System.Linq.Enumerable.OrderBy(
-                                    System.Linq.Enumerable.Where(
-                                        System.Linq.Enumerable.Select(times, t => 1000.0 / t), 
-                                        f => f < 1000 && f >= 1), 
-                                    f => f));
-
-                            if (fpsList.Length > 0) {
-                                int index = (int)(fpsList.Length * 0.01);
-                                if (index >= fpsList.Length) index = fpsList.Length - 1;
-                                _current1PercentLow = (int)Math.Round(fpsList[index]);
-                            } else {
-                                _current1PercentLow = 0;
-                            }
-                        } else {
+                        // Wipe the OSD if the game minimizes or closes (no buffers received in 2 seconds)
+                        double idleMs = (System.Diagnostics.Stopwatch.GetTimestamp() - lastEventArrivalTicks) * 1000.0 / System.Diagnostics.Stopwatch.Frequency;
+                        if (idleMs > 2000) {
+                            _currentFps = 0;
                             _current1PercentLow = 0;
+                            lock (_frameTimes) { _frameTimes.Clear(); }
+                            return;
                         }
 
-                        _frameCount.Clear();
+                        double[] times;
+                        lock (_frameTimes) { times = _frameTimes.ToArray(); }
+                        
+                        if (times.Length > 10) {
+                            // Average FPS = (Frames) / (Total Time). Bypasses ETW buffer bursts entirely.
+                            double totalTimeMs = System.Linq.Enumerable.Sum(times);
+                            _currentFps = (int)Math.Round((times.Length / totalTimeMs) * 1000.0);
+
+                            // 1% Lows Math
+                            var sortedTimes = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.OrderByDescending(times, t => t));
+                            int worstCount = Math.Max(1, (int)(sortedTimes.Length * 0.01));
+                            double avgWorstTime = System.Linq.Enumerable.Average(System.Linq.Enumerable.Take(sortedTimes, worstCount));
+                            
+                            int instant1PercentLow = (int)Math.Round(1000.0 / avgWorstTime);
+
+                            if (_current1PercentLow == 0) _current1PercentLow = instant1PercentLow;
+                            else _current1PercentLow = (int)((_current1PercentLow * 4.0 + instant1PercentLow) / 5.0);
+                        }
                     };
                     _timer.Start();
                     _session.Source.Process(); 
